@@ -12,6 +12,11 @@ from threading import Thread
 import multiprocessing
 from wx.lib.pubsub import pub
 
+import multiprocessing
+from multiprocessing import Process
+from multiprocessing import Queue
+import Queue
+
 class WorkerProcess(multiprocessing.Process):
 
     def __init__(self, port, addresslist, result_queue):
@@ -25,7 +30,7 @@ class WorkerProcess(multiprocessing.Process):
     def run(self):
         while not self.exit.is_set():
             self.sch.RegularLoadInfo()
-            self.result_queue.put(self.sch.rawData)
+            self.result_queue.put(self.sch.quadObjs)
             time.sleep(0.1)
         print "Exited"
 
@@ -51,6 +56,8 @@ class DataExchange(object):
 
     def bind_to(self, callback):
         self._observers.append(callback)
+        #print(self._observers)
+        #print((self._observers[0].im_class.__name__))
 
     # addr
     def get_addressList(self):
@@ -58,7 +65,9 @@ class DataExchange(object):
 
     def set_addressList(self, value):
         self._addressList = value
-        print(self._addressList)
+        #print('check')
+        #print(self._addressList)
+        self.OnSwitch()
 
     addressList = property(get_addressList, set_addressList)
 
@@ -81,7 +90,7 @@ class DataExchange(object):
             self.workerSerial = WorkerProcess(self.serialPort, self.addressList, self.result)
             self.workerSerial.daemon = True
             self.workerSerial.start()
-            self.timer = Timer(0.5, self.OnUpdate, ())
+            self.timer = Timer(0.1, self.OnUpdate, ())
             self.timer.daemon = True
             self.timer.start()
             pass
@@ -99,16 +108,47 @@ class DataExchange(object):
 
     def set_rawData(self, value):
         self._rawData = value
-        print('get new data')
-        print(self._rawData)
+        #print('get new data')
+        #print(self._rawData)
 
     rawData = property(get_rawData, set_rawData)
 
     def OnUpdate(self):
         while True:
             try:
-                temp = self.result.get()
+                tempObjList = self.result.get()
+                assignObjList = []
+                for i in range(len(self.addressList)):
+                    if len(self.addressList[i]) > 0:
+                        assignObjList.append(tempObjList[0])
+                        tempObjList.pop(0)
+                    else:
+                        assignObjList.append(None)
+
                 for callback in self._observers:
-                    callback(temp)
+                    subscriberName = callback.im_class.__name__
+                    if subscriberName == 'TabOne':
+                        callback(assignObjList, self.addressList)
+                    elif subscriberName == 'TabTwo':
+                        tempObj = assignObjList[0]
+                        if tempObj != None:
+                            callback(tempObj)
+                    elif subscriberName == 'TabThree':
+                        tempObj = assignObjList[1]
+                        if tempObj != None:
+                            callback(tempObj)
+                    elif subscriberName == 'TabFour':
+                        tempObj = assignObjList[2]
+                        if tempObj != None:
+                            callback(tempObj)
+                    else:
+                        pass
+        
             except Queue.Empty:
                 pass
+
+    def OnSwitch(self):
+        for callback in self._observers:
+            subscriberName = callback.im_class.__name__
+            if subscriberName == 'TabOne':
+                callback(None, self.addressList)

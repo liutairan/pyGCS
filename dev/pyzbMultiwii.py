@@ -23,6 +23,8 @@ def time_limit(seconds):
 def message_received(data):
     print(len(data))
 
+
+
 class MultiWii:
 
     # Multiwii MSP Commands
@@ -313,7 +315,7 @@ class MultiWii:
                 self.msp_status_ex['profile'] = temp[4]
                 self.msp_status_ex['averageSystemLoadPercent'] = temp[5]
                 self.msp_status_ex['armingFlags'] = temp[6]
-                self.parseSensorStatus(self.msp_status_ex['activeSensors'])
+                #self.parseSensorStatus(self.msp_status_ex['activeSensors'])
             elif cmd == MultiWii.MSP_SENSOR_STATUS:
                 temp = struct.unpack('<9B',data)
                 # to do

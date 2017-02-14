@@ -18,7 +18,7 @@ from wx.lib.pubsub import pub
 import serial
 import serial.tools.list_ports
 from pyzbMultiwii import MultiWii
-
+from QuadStates import QuadStates
 
 import math
 import time
@@ -46,6 +46,9 @@ class SerialCommunication(object):
         self.serialPort = port
         self.board = MultiWii(self.serialPort)
         self._rawData = None
+        self.quadObjs = []
+        self.CreateObjs()
+        self.PreLoadInfo()
     
     def stopSerial(self):
         self.board.stopDevice()
@@ -53,57 +56,55 @@ class SerialCommunication(object):
     def transcheck(self):
         print('get data')
 
-    def PreLoadInfo(self):
+    def CreateObjs(self):
         for i in range(len(self.addressList)):
-            tempAddress = self.addressList[i]
-            if len(tempAddress) > 0:
-                # do pre check
-                print('Device '+str(i+1)+' online')
-                self.PreCheck(tempAddress)
-                pass
-            else:
-                print('Device '+str(i+1)+' not online')
+            if len(self.addressList[i]) > 0:
+                self.quadObjs.append(QuadStates('\x01', self.addressList[i][0], self.addressList[i][1]))
+
+    def PreLoadInfo(self):
+        for i in range(len(self.quadObjs)):
+            tempObj = self.quadObjs[i]
+            try:
+                self.PreCheck(tempObj)
+            except:
                 pass
                 
-    def PreCheck(self, address):
-        address_long = address[0]
-        address_short = address[1]
+    def PreCheck(self, obj):
+        address_long = obj.address_long
+        address_short = obj.address_short
         try:
-            #self.board.getData(0,MultiWii.ANALOG,[],'0',address_long,address_short)
-            self.board.getData(0,MultiWii.MSP_STATUS_EX,[],'\x01',address_long,address_short)
-            print(self.board.msp_status_ex)
+            self.board.getData(0,MultiWii.BOXIDS,[],'\x01',address_long,address_short)
+            obj.activeBoxes = self.board.activeBoxes
         except Exception, error:
             print('Failed')
             print(Exception)
             print(error)
 
     def RegularLoadInfo(self):
-        for i in range(len(self.addressList)):
-            tempAddress = self.addressList[i]
-            if len(tempAddress) > 0:
-                print('Device '+str(i+1)+' online')
-                try:
-                    self.RegularCheck(tempAddress)
-                except:
-                    print('time out')
-                    pass
-                pass
-            else:
+        for i in range(len(self.quadObjs)):
+            tempObj = self.quadObjs[i]
+            try:
+                self.RegularCheck(tempObj)
+            except:
                 pass
     
-    def RegularCheck(self, address):
-        address_long = address[0]
-        address_short = address[1]
+    def RegularCheck(self, obj):
+        address_long = obj.address_long
+        address_short = obj.address_short
         try:
             self.board.getData(0,MultiWii.MSP_STATUS_EX,[],'\x01',address_long,address_short)
-            self.rawData = self.board.msp_status_ex
-            #self.board.sendCMDNew(0,MultiWii.MSP_STATUS_EX,[],'0',address_long,address_short)
-            #print(self.board.msp_status_ex)
+            obj.msp_status_ex = self.board.msp_status_ex
+            self.board.parseSensorStatus(self.board.msp_status_ex['activeSensors'])
+            obj.sensor_flags = self.board.sensor_flags
+            self.board.parseFlightModeFlags(obj.activeBoxes, obj.msp_status_ex['flightModeFlags'])
+            obj.flightModes = self.board.flightModes
+            self.board.getData(0,MultiWii.ATTITUDE,[],'\x01',address_long,address_short)
+            obj.msp_attitude = self.board.msp_attitude
         except Exception, error:
             print('Failed')
             print(Exception)
             print(error)
-
+    
     def UploadWPs(self):
         pass
 
