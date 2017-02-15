@@ -13,7 +13,6 @@ class TabThree(wx.Panel):
         self.deh.bind_to(self.OnUpdate)
         self.addr_long = '\x00\x13\xA2\x00\x40\xC1\x43\x0B'
         self.addr = '\xFF\xFE'
-        #self.sch.addressList[0] = [self.addr_long, self.addr]   # For debug, remove later
         self.InitUI()
 
     def InitUI(self):
@@ -102,8 +101,6 @@ class TabThree(wx.Panel):
         self.Show(True)
 
     def OnUpdate(self, global_obj):
-        #print('tab two updated')
-        #print(global_states)
         if global_obj.sensor_flags['acc'] == 1:
             self.accLight1.SetBackgroundColour((0,255,0))
         elif global_obj.sensor_flags['acc'] == 0:
@@ -146,7 +143,7 @@ class TabThree(wx.Panel):
             self.hwLight1.SetBackgroundColour((255,0,0))
         pass
     
-        print(global_obj.flightModes)
+        #print(global_obj.flightModes)
         
         self.heading.SetLabel('Heading: '+str(global_obj.msp_attitude['heading']))
         self.angx.SetLabel('ANG-X: '+str(global_obj.msp_attitude['angx']))
@@ -258,7 +255,6 @@ class TabThree(wx.Panel):
         itemId = event.GetId()
         menu = event.GetEventObject()
         menuItem = menu.FindItemById(itemId)
-        #print menuItem.GetLabel()
         
         self.wpList.DeleteItem(int(item)-1)
         for i in range(self.wpList.GetItemCount()):
@@ -298,7 +294,6 @@ class TabThree(wx.Panel):
             self.connectButton.SetLabel('Disconnect')
             self.connectLight1.SetLabel('CONN')
             self.connectLight1.SetBackgroundColour((0,255,0))
-            #self.deh.addressList[0] = [self.addr_long, self.addr]
             self.deh.addressList = [self.deh.addressList[0], [self.addr_long, self.addr], self.deh.addressList[2]]
         elif self.connectButton.GetLabel() == 'Disconnect':
             print('Quad 2 Disconnected')

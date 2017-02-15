@@ -35,11 +35,12 @@ class WorkerProcess(multiprocessing.Process):
         print "Exited"
 
     def shutdown(self):
-        print "Shutdown initiated"
+        print("Shutdown initiated")
         try:
             self.sch.stopSerial()
         except Exception:
             print(Exception)
+        print('Process stopped')
         self.exit.set()
 
 

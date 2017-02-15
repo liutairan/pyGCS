@@ -146,7 +146,7 @@ class TabFour(wx.Panel):
             self.hwLight1.SetBackgroundColour((255,0,0))
         pass
     
-        print(global_obj.flightModes)
+        #print(global_obj.flightModes)
         
         self.heading.SetLabel('Heading: '+str(global_obj.msp_attitude['heading']))
         self.angx.SetLabel('ANG-X: '+str(global_obj.msp_attitude['angx']))

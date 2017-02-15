@@ -52,9 +52,6 @@ class SerialCommunication(object):
     
     def stopSerial(self):
         self.board.stopDevice()
-    
-    def transcheck(self):
-        print('get data')
 
     def CreateObjs(self):
         for i in range(len(self.addressList)):
@@ -70,11 +67,8 @@ class SerialCommunication(object):
                 pass
                 
     def PreCheck(self, obj):
-        address_long = obj.address_long
-        address_short = obj.address_short
         try:
-            self.board.getData(0,MultiWii.BOXIDS,[],'\x01',address_long,address_short)
-            obj.activeBoxes = self.board.activeBoxes
+            self.board.getData(0,MultiWii.BOXIDS,[],obj)
         except Exception, error:
             print('Failed')
             print(Exception)
@@ -87,19 +81,13 @@ class SerialCommunication(object):
                 self.RegularCheck(tempObj)
             except:
                 pass
-    
+
     def RegularCheck(self, obj):
-        address_long = obj.address_long
-        address_short = obj.address_short
         try:
-            self.board.getData(0,MultiWii.MSP_STATUS_EX,[],'\x01',address_long,address_short)
-            obj.msp_status_ex = self.board.msp_status_ex
-            self.board.parseSensorStatus(self.board.msp_status_ex['activeSensors'])
-            obj.sensor_flags = self.board.sensor_flags
-            self.board.parseFlightModeFlags(obj.activeBoxes, obj.msp_status_ex['flightModeFlags'])
-            obj.flightModes = self.board.flightModes
-            self.board.getData(0,MultiWii.ATTITUDE,[],'\x01',address_long,address_short)
-            obj.msp_attitude = self.board.msp_attitude
+            self.board.getData(0,MultiWii.MSP_STATUS_EX,[],obj)
+            self.board.parseSensorStatus(obj)
+            self.board.parseFlightModeFlags(obj)
+            self.board.getData(0,MultiWii.ATTITUDE,[],obj)
         except Exception, error:
             print('Failed')
             print(Exception)
