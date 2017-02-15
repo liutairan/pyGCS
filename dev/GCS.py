@@ -1,6 +1,30 @@
 #!/usr/bin/pythonw
 # -*- coding: UTF-8 -*-
 
+'''
+MIT License
+
+Copyright (c) 2017 Tairan Liu
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+'''
+
 import os
 from os import walk
 import sys
@@ -40,6 +64,15 @@ from PIL import Image
 import signal
 from contextlib import contextmanager
 
+__author__ = "Tairan Liu"
+__copyright__ = "Copyright 2017, Tairan Liu"
+__credits__ = ["Tairan Liu", "Other Supporters"]
+__license__ = "MIT"
+__version__ = "0.4-dev"
+__maintainer__ = "Tairan Liu"
+__email__ = "liutairan2012@gmail.com"
+__status__ = "Development"
+
 class TimeoutException(Exception): pass
 
 @contextmanager
@@ -47,7 +80,6 @@ def time_limit(seconds):
     def signal_handler(signum, frame):
         raise TimeoutException, "Timed out!"
     signal.signal(signal.SIGALRM, signal_handler)
-    #signal.alarm(seconds)
     signal.setitimer(signal.ITIMER_REAL, seconds)
     try:
         yield
@@ -69,21 +101,21 @@ class MainFrame(wx.Frame):
         self.rightDown = 0
         
         # Map Info
-        self.WIDTH = 640
-        self.HEIGHT = 640
+        self._width = 640
+        self._height = 640
 
         
-        self.LATITUDE  =  30.408158 #37.7913838
-        self.LONGITUDE = -91.179533 #-79.44398934
+        self._originLat  =  30.408158 #37.7913838
+        self._originLon = -91.179533 #-79.44398934
         
-        self.ZOOM = 21
-        self.MAPTYPE = 'hybrid' #'roadmap'
+        self._zoom = 21
+        self._maptype = 'hybrid' #'roadmap'
 
-        self.homeLat = self.LATITUDE
-        self.homeLon = self.LONGITUDE
+        self._homeLat = self._originLat
+        self._homeLon = self._originLon
         
-        self.dX = 0
-        self.dY = 0
+        self._dX = 0
+        self._dY = 0
         
         self.waypoints = []
         
@@ -104,7 +136,7 @@ class MainFrame(wx.Frame):
 
         # Panel Elements
         # Create Empty Image to preload
-        self.image = wx.EmptyImage(640,640)
+        self.image = wx.EmptyImage(self._width, self._height)
         self.imageCtrl = wx.StaticBitmap(self, wx.ID_ANY, wx.BitmapFromImage(self.image), pos=(0, 0))
 
         # Bind Mouse Events
@@ -161,12 +193,8 @@ class MainFrame(wx.Frame):
         self.Refresh()
     
     def OnPaint(self, event):
-        w, h = self.GetClientSize()
-        
-        
-        #self.image = self.goompy.getImage()
-        #self.image = self.mapImage
-        #self.imageCtrl.SetBitmap(wx.BitmapFromImage(PilImageToWxImage(self.image)))
+        #w, h = self.GetClientSize()
+        #print(w,h)
         '''
         self.image = self.mapImage
         tempImage = wx.BitmapFromImage(PilImageToWxImage(self.image))
@@ -236,6 +264,7 @@ class MainFrame(wx.Frame):
 
     def OnMotion(self, event):
         x, y = event.GetPosition()
+        #print(x,y)
         if self.inMapFlag == 1 and self.leftDown == 1:
             '''
             dx = x-self.mouseX
@@ -257,22 +286,21 @@ class MainFrame(wx.Frame):
             '''
             self.Refresh()
 
-
     def OnScroll(self, event):
         dlevel = event.GetWheelRotation()
         # +: Down/Left, -: Up/Right
+        '''
         self.ZOOM = self.ZOOM + dlevel
         if self.ZOOM > 21:
             self.ZOOM = 21
         elif self.ZOOM < 3:
             self.ZOOM = 3
         print(self.ZOOM)
+        '''
         #self.handle.zoom = self.ZOOM
         #self.goompy = GooMPy(self.WIDTH, self.HEIGHT, self.LATITUDE, self.LONGITUDE, self.ZOOM, self.MAPTYPE)
         #self.mapImage = PreloadMap(self.handle)
         self.Refresh()
-
-
 
 def main():
     map = wx.App()

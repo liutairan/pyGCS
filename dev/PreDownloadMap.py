@@ -24,8 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
-from setuptools import setup
-
 __author__ = "Tairan Liu"
 __copyright__ = "Copyright 2017, Tairan Liu"
 __credits__ = ["Tairan Liu", "Other Supporters"]
@@ -34,15 +32,3 @@ __version__ = "0.4-dev"
 __maintainer__ = "Tairan Liu"
 __email__ = "liutairan2012@gmail.com"
 __status__ = "Development"
-
-APP = ['GCS.py']
-DATA_FILES = []
-OPTIONS = {'argv_emulation': True, 
-    'iconfile': 'mwp_icon.icns' }
-
-setup(
-    app=APP,
-    data_files=DATA_FILES,
-    options={'py2app': OPTIONS},
-    setup_requires=['py2app'],
-)
