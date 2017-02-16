@@ -1,3 +1,29 @@
+#!/usr/bin/env python
+
+'''
+MIT License
+
+Copyright (c) 2017 Tairan Liu
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+'''
+
 import os
 import sys
 import time
@@ -9,6 +35,15 @@ from wx.lib.pubsub import pub
 
 import serial
 import serial.tools.list_ports
+
+__author__ = "Tairan Liu"
+__copyright__ = "Copyright 2017, Tairan Liu"
+__credits__ = ["Tairan Liu", "Other Supporters"]
+__license__ = "MIT"
+__version__ = "0.4-dev"
+__maintainer__ = "Tairan Liu"
+__email__ = "liutairan2012@gmail.com"
+__status__ = "Development"
 
 class WorkerVoiceThread(threading.Thread):
     def __init__(self, notify_window, id):
@@ -35,9 +70,6 @@ class DataEvent(wx.PyEvent):
         wx.PyEvent.__init__(self)
         self.SetEventType(id)
         self.data = data
-
-
-
 
 
 class TabOne(wx.Panel):
@@ -91,9 +123,10 @@ class TabOne(wx.Panel):
         self.Bind(wx.EVT_BUTTON,self.OnClickVoiceSwitch, self.voiceSwitch)
 
         # Status
-        quadLabel1 = wx.StaticText(self, -1, 'QUAD 1', pos = (5,410), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        connectLight1 = wx.StaticText(self, -1, 'NO CON', pos = (5,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        connectLight1.SetBackgroundColour((255,0,0))
+        self.quadLabel1 = wx.StaticText(self, -1, 'QUAD 1', pos = (5,410), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.quadLabel1.SetBackgroundColour((220,220,220))
+        self.connectLight1 = wx.StaticText(self, -1, 'NO CON', pos = (5,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.connectLight1.SetBackgroundColour((255,0,0))
         armLight1 = wx.StaticText(self, -1, 'DISARM', pos = (5,450), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         armLight1.SetBackgroundColour((220,220,220))
         levelLight1 = wx.StaticText(self, -1, 'LEVEL', pos = (5,470), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
@@ -107,9 +140,10 @@ class TabOne(wx.Panel):
         gcsLight1 = wx.StaticText(self, -1, 'GCS', pos = (5,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         gcsLight1.SetBackgroundColour((220,220,220))
         
-        quadLabel2 = wx.StaticText(self, -1, 'QUAD 2', pos = (75,410), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        connectLight2 = wx.StaticText(self, -1, 'NO CON', pos = (75,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        connectLight2.SetBackgroundColour((255,0,0))
+        self.quadLabel2 = wx.StaticText(self, -1, 'QUAD 2', pos = (75,410), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.quadLabel2.SetBackgroundColour((220,220,220))
+        self.connectLight2 = wx.StaticText(self, -1, 'NO CON', pos = (75,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.connectLight2.SetBackgroundColour((255,0,0))
         armLight2 = wx.StaticText(self, -1, 'DISARM', pos = (75,450), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         armLight2.SetBackgroundColour((220,220,220))
         levelLight2 = wx.StaticText(self, -1, 'LEVEL', pos = (75,470), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
@@ -123,9 +157,10 @@ class TabOne(wx.Panel):
         gcsLight2 = wx.StaticText(self, -1, 'GCS', pos = (75,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         gcsLight2.SetBackgroundColour((220,220,220))
         
-        quadLabel3 = wx.StaticText(self, -1, 'QUAD 3', pos = (145,410), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        connectLight3 = wx.StaticText(self, -1, 'NO CON', pos = (145,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        connectLight3.SetBackgroundColour((255,0,0))
+        self.quadLabel3 = wx.StaticText(self, -1, 'QUAD 3', pos = (145,410), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.quadLabel3.SetBackgroundColour((220,220,220))
+        self.connectLight3 = wx.StaticText(self, -1, 'NO CON', pos = (145,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.connectLight3.SetBackgroundColour((255,0,0))
         armLight3 = wx.StaticText(self, -1, 'DISARM', pos = (145,450), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         armLight3.SetBackgroundColour((220,220,220))
         levelLight3 = wx.StaticText(self, -1, 'LEVEL', pos = (145,470), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
@@ -142,11 +177,26 @@ class TabOne(wx.Panel):
         # Show
         self.Show(True)
 
-    def OnUpdate(self, global_states):
+    def OnUpdate(self, global_states, other_states):
         # use global_states to update this page
-        print('tab one updated')
-        print(global_states)
-        pass
+        #print('tab one updated')
+        #print(global_states)
+        #print(other_states)
+        try:
+            if len(other_states[0]) > 0:
+                self.connectLight1.SetBackgroundColour((0,255,0))
+            else:
+                self.connectLight1.SetBackgroundColour((255,0,0))
+            if len(other_states[1]) > 0:
+                self.connectLight2.SetBackgroundColour((0,255,0))
+            else:
+                self.connectLight2.SetBackgroundColour((255,0,0))
+            if len(other_states[2]) > 0:
+                self.connectLight3.SetBackgroundColour((0,255,0))
+            else:
+                self.connectLight3.SetBackgroundColour((255,0,0))
+        except:
+            pass
 
     def OnChoosePort(self, event):
         self.deh.serialPort = self.serialPortComboBox.GetValue()
