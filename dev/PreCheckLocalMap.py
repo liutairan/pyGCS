@@ -24,6 +24,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
 __author__ = "Tairan Liu"
 __copyright__ = "Copyright 2017, Tairan Liu"
 __credits__ = ["Tairan Liu", "Other Supporters"]
@@ -32,3 +35,56 @@ __version__ = "0.4-dev"
 __maintainer__ = "Tairan Liu"
 __email__ = "liutairan2012@gmail.com"
 __status__ = "Development"
+
+
+def loadData(path):
+    infileList = []
+    with open(path,'r') as inf:
+        infileList = inf.readlines()
+    dataList = []
+    for temparea in infileList:
+        templist = temparea.split()
+        if int(templist[2]) == 21:
+            dataList.append(templist[4:])
+    #print(dataList)
+    return dataList
+
+def plotAreas(cornerList):
+    fig1 = plt.figure()
+    #plt.axes()
+    ax = fig1.add_subplot(111, aspect='equal')
+    patchList = []
+    edge_x_min = float(cornerList[0][2])
+    edge_x_max = float(cornerList[0][2])
+    edge_y_min = float(cornerList[0][0])
+    edge_y_max = float(cornerList[0][0])
+    for i in range(len(cornerList)):
+        corner = cornerList[i]
+        x = min(float(corner[2]), float(corner[3]))
+        y = min(float(corner[0]), float(corner[1]))
+        dx = abs(float(corner[2]) - float(corner[3]))
+        dy = abs(float(corner[0]) - float(corner[1]))
+        edge_x_min = min(edge_x_min, x)
+        edge_x_max = max(edge_x_max, max(float(corner[2]), float(corner[3])))
+        edge_y_min = min(edge_y_min, y)
+        edge_y_max = max(edge_y_max, max(float(corner[0]), float(corner[1])))
+        patchList.append(patches.Rectangle((x,y), dx, dy, fill=False))
+    print(len(patchList))
+    for p in patchList:
+        ax.add_patch(p)
+    fig_x_min = edge_x_min - 0.1*(edge_x_max - edge_x_min)
+    fig_x_max = edge_x_max + 0.1*(edge_x_max - edge_x_min)
+    fig_y_min = edge_y_min - 0.1*(edge_y_max - edge_y_min)
+    fig_y_max = edge_y_max + 0.1*(edge_y_max - edge_y_min)
+    ax.set_xlim(fig_x_min, fig_x_max)
+    ax.set_ylim(fig_y_min, fig_y_max)
+    plt.show()
+    #fig1.savefig('Areas.png', dpi=300, bbox_inches='tight')
+
+def main():
+    path = 'mapcache.txt'
+    dataList = loadData(path)
+    plotAreas(dataList)
+
+if __name__ == "__main__":
+    main()
