@@ -85,6 +85,10 @@ class Map(object):
         self._cachepath = 'mapscache/'
     
         self.retImage = wx.EmptyImage(self._width, self._height)
+        try:
+            self.initLoad()
+        except:
+            pass
 
     def get_maptype(self):
         return self._maptype
@@ -109,6 +113,9 @@ class Map(object):
         self._cachepath = value
 
     cachepath = property(get_cachepath, set_cachepath)
+
+    def initLoad(self):
+        self.loadImage()
 
     def move(self, dx, dy):
         latStep, lonStep = self._local_tile_step()
@@ -350,7 +357,7 @@ class Map(object):
                     temp1 = file[:-4]
                     temp2 = temp1.split('_')
                     keyWordLList.append(temp2)
-        groups, keywords = GroupLists(keyWordLList, [2,3])
+        groups, keywords = self._groupLists(keyWordLList, [2,3])
 
         if len(groups) >0: # some maps exist
             areas = []
@@ -362,10 +369,10 @@ class Map(object):
                         areas.append([float(temp3[0]), float(temp3[1]), int(temp3[2]), temp3[3], float(temp3[4]), float(temp3[5]), float(temp3[6]), float(temp3[7])])
             #print(keywords)
 
-            temp = InAreas(handle, areas)
+            temp = self._inAreas(areas)
             if temp >= 0: #in one local map
                 print('Wait to load')
-                img = StitchMaps(fileList, handle, areas[temp])
+                img = self._stitchMaps(fileList, areas[temp])
                 return [1, img]
             else: # not in local map
                 #print(temp)
@@ -374,7 +381,7 @@ class Map(object):
             return [0]
 
     
-    def GroupLists(lists, key=[2,3]):
+    def _groupLists(self, lists, key=[2,3]):
         totalNum = len(lists)
         fieldNum = len(lists[0])
         tempGroup = []
@@ -401,48 +408,47 @@ class Map(object):
 
         return tempGroup, keyWordList
 
-    def InArea(lat, lon, border):
+    def _inArea(self, lat, lon, border):
         if (lat >= border[1]) and (lat <= border[0]) and (lon >= border[2]) and (lon <= border[3]):
             return 1
         else:
             return 0
 
-    def InAreas(handle, areaList):
+    def _inAreas(self, areaList):
         for i in range(len(areaList)):
             temp1 = areaList[i]
             zoomLevel = temp1[2]
             latStep = (temp1[4]-temp1[5])/2
             lonStep = (temp1[7]-temp1[6])/2
         
-            temp2 = InArea(handle.lat, handle.lon, temp1[4:8])
+            temp2 = self._inArea(self._centerLat, self._centerLon, temp1[4:8])
             if temp2 == 1:
-                if handle.zoom == zoomLevel:
+                if self.zoomlevel == zoomLevel:
                     return i
                 else:
                     return -1
-    
-        return -1
+            else:
+                return -1
 
-    def StitchMaps(filelist, handle, area):
+    def _stitchMaps(self, filelist, area):
         latStep = (area[4]-area[5])/2
         lonStep = (area[7]-area[6])/2
-        newLat = handle.lat
-        newLon = handle.lon
+        newLat = self._centerLat
+        newLon = self._centerLon
         #print(latStep,lonStep)
-        lats = [roundto(area[4],6), roundto(float(area[0]),6), roundto(area[5],6)]
-        lons = [roundto(area[6],6), roundto(float(area[1]),6), roundto(area[7],6)]
+        lats = [self._roundto(area[4],6), self._roundto(float(area[0]),6), self._roundto(area[5],6)]
+        lons = [self._roundto(area[6],6), self._roundto(float(area[1]),6), self._roundto(area[7],6)]
         strLats = ["%.6f" % lats[0], "%.6f" % lats[1], "%.6f" % lats[2]]
         strLons = ["%.6f" % lons[0], "%.6f" % lons[1], "%.6f" % lons[2]]
-        #print(strLats, strLons)
+
         path = 'mapscache/'
         fileNames = []
         for i in range(3):
             for j in range(3):
-                tempName = strLats[i]+'_'+strLons[j]+'_'+str(handle.zoom)+'_'+handle.maptype+'_'+str(handle.width)+'_'+str(handle.height)+'.jpg'
+                tempName = strLats[i]+'_'+strLons[j]+'_'+str(self.zoomlevel)+'_'+self.maptype+'_'+str(self._width)+'_'+str(self._height)+'.jpg'
                 fileNames.append(tempName)
-        #print(fileNames)
     
-        bigImage = Image.new('RGB', (3*handle.width, 3*handle.height))
+        bigImage = PIL.Image.new('RGB', (3*self._width, 3*self._height))
     
         for i in range(len(fileNames)):
             file = fileNames[i]
@@ -451,11 +457,10 @@ class Map(object):
             if file in filelist:
                 tile = Image.open(path+file)
                 #print(tile)
-                bigImage.paste(tile, (k*handle.width, j*handle.height))
+                bigImage.paste(tile, (k*self._width, j*self._height))
             else:
                 pass
         #bigImage.save('Test.jpg')
-
 
         north = float(area[0]) + 3.0*latStep/2.0
         west = float(area[1]) - 3.0*lonStep/2.0
@@ -471,7 +476,7 @@ class Map(object):
         return winImage
 
 
-    def GetProperty(lists):
+    def _getProperty(self, lists):
         mapType = lists[0][3]
         zoomLevel = int(lists[0][2])
         centerLatList = []
@@ -479,13 +484,13 @@ class Map(object):
         for templist in lists:
             centerLatList.append(float(templist[0]))
             centerLonList.append(float(templist[1]))
-        tempborder = GetBorder(centerLatList, centerLonList)
+        tempborder = self.getBorder(centerLatList, centerLonList)
         border = tempborder[0:4]
         maxBorder = tempborder[4:8]
         step = tempborder[8: 10]
         return [mapType, zoomLevel, border, maxBorder, step]
 
-    def GetBorder(latList, lonList):
+    def _getBorder(self, latList, lonList):
         minLatCenter = min(latList)
         maxLatCenter = max(latList)
         minLonCenter = min(lonList)
@@ -499,7 +504,7 @@ class Map(object):
         #print(latStep, lonStep)
         return [minLonCenter, maxLonCenter, maxLatCenter, minLatCenter, leftBorder, rightBorder, upBorder, downBorder, latStep, lonStep]
 
-    def RequiredMap(waypoints):
+    def _requiredMap(self, waypoints):
         if len(waypoints) > 0:
             maxLat = waypoints[0][0]
             minLat = waypoints[0][0]
@@ -524,7 +529,7 @@ class Map(object):
             zoomLevel = 21
             zoomFlag = 1
             while zoomFlag and (zoomLevel >= 3):
-                latStep, lonStep = CalStepFromGPS(centerLat, centerLon, zoom = zoomLevel)
+                latStep, lonStep = self._local_tile_step()
                 if (latSize < latStep) and (lonSize < lonStep):
                     zoomFlag = 0
                 else:
