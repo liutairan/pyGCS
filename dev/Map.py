@@ -208,68 +208,6 @@ class Map(object):
             myWxImage.SetData( myPilImageRgbData )
         return myWxImage
 
-    def InArea(self, lat, lon, border):
-        if (lat >= border[1]) and (lat <= border[0]) and (lon >= border[2]) and (lon <= border[3]):
-            return 1
-        else:
-            return 0
-
-    def InAreas(self, handle, areaList):
-        for i in range(len(areaList)):
-            temp1 = areaList[i]
-            zoomLevel = temp1[2]
-            latStep = (temp1[4]-temp1[5])/2
-            lonStep = (temp1[7]-temp1[6])/2
-            temp2 = InArea(handle.lat, handle.lon, temp1[4:8])
-            if temp2 == 1:
-                if handle.zoom == zoomLevel:
-                    return i
-                else:
-                    return -1
-        return -1
-
-    def StitchMaps(self, filelist, handle, area):
-        latStep = (area[4]-area[5])/2
-        lonStep = (area[7]-area[6])/2
-        newLat = handle.lat
-        newLon = handle.lon
-        #print(latStep,lonStep)
-        lats = [roundto(area[4],6), roundto(float(area[0]),6), roundto(area[5],6)]
-        lons = [roundto(area[6],6), roundto(float(area[1]),6), roundto(area[7],6)]
-        strLats = ["%.6f" % lats[0], "%.6f" % lats[1], "%.6f" % lats[2]]
-        strLons = ["%.6f" % lons[0], "%.6f" % lons[1], "%.6f" % lons[2]]
-        #print(strLats, strLons)
-        path = 'mapscache/'
-        fileNames = []
-        for i in range(3):
-            for j in range(3):
-                tempName = strLats[i]+'_'+strLons[j]+'_'+str(handle.zoom)+'_'+handle.maptype+'_'+str(handle.width)+'_'+str(handle.height)+'.jpg'
-                fileNames.append(tempName)
-        #print(fileNames)
-        bigImage = Image.new('RGB', (3*handle.width, 3*handle.height))
-        for i in range(len(fileNames)):
-            file = fileNames[i]
-            j = int(i/3)
-            k = i % 3
-            if file in filelist:
-                tile = Image.open(path+file)
-                #print(tile)
-                bigImage.paste(tile, (k*handle.width, j*handle.height))
-            else:
-                pass
-        #bigImage.save('Test.jpg')
-
-        north = float(area[0]) + 3.0*latStep/2.0
-        west = float(area[1]) - 3.0*lonStep/2.0
-        fetchPointX = int((newLon - west)/lonStep*640.0)
-        fetchPointY = int(-(newLat - north)/latStep*640.0)
-        #print(fetchPointX,fetchPointY)
-        tempBox = (fetchPointX-320, fetchPointY-320, fetchPointX+320, fetchPointY+320)
-        #tempBox = (0,0, 200, 200)
-        winImage = bigImage.crop(tempBox)
-        #winImage.show()
-        #winImage.save('Test2.jpg', "JPEG")
-        return winImage
 
     def GPStoImagePos(self, waypoints, tempLat, tempLon, zoomlevel):
         latStep, lonStep = CalStepFromGPS(tempLat, tempLon, zoom = zoomlevel)
