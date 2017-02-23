@@ -24,6 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
+import time
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
@@ -81,10 +82,41 @@ def plotAreas(cornerList):
     plt.show()
     #fig1.savefig('Areas.png', dpi=300, bbox_inches='tight')
 
+def plotAreas2(tileList):
+    fig1 = plt.figure()
+    #plt.axes()
+    ax = fig1.add_subplot(111, aspect='equal')
+    patchList = []
+    edge_x_min = float(tileList[0][0])
+    edge_x_max = float(tileList[0][0])
+    edge_y_min = float(tileList[0][1])
+    edge_y_max = float(tileList[0][1])
+    xList = []
+    yList = []
+    for i in range(len(tileList)):
+        tile = tileList[i]
+        x = float(tile[0])
+        y = float(tile[1])
+        xList.append(x)
+        yList.append(y)
+        edge_x_min = min(edge_x_min, x)
+        edge_x_max = max(edge_x_max, x)
+        edge_y_min = min(edge_y_min, y)
+        edge_y_max = max(edge_y_max, y)
+
+    ax.plot(xList, yList, 'ro')
+    fig_x_min = edge_x_min - 0.1*(edge_x_max - edge_x_min)
+    fig_x_max = edge_x_max + 0.1*(edge_x_max - edge_x_min)
+    fig_y_min = edge_y_min - 0.1*(edge_y_max - edge_y_min)
+    fig_y_max = edge_y_max + 0.1*(edge_y_max - edge_y_min)
+    ax.set_xlim(fig_x_min, fig_x_max)
+    ax.set_ylim(fig_y_min, fig_y_max)
+    plt.show()
+
 def main():
     path = 'mapcache.txt'
     dataList = loadData(path)
-    plotAreas(dataList)
+    plotAreas2(dataList)
 
 if __name__ == "__main__":
     main()

@@ -21,32 +21,32 @@ from Map import Map
 class MainFrame(wx.Frame):
     def __init__(self, *args, **kw):
         super(MainFrame, self).__init__(*args, **kw)
-        
+
         # Mouse states
         self.inWindowFlag = 0
         self.inMapFlag = 0
         self.leftDown = 0
         self.rightDown = 0
-        
+
         # Map Info
         self.WIDTH = 640
         self.HEIGHT = 640
 
-        
+
         self.LATITUDE  =  30.408158 #37.7913838
         self.LONGITUDE = -91.179533 #-79.44398934
-        
+
         self.ZOOM = 21
         self.MAPTYPE = 'hybrid' #'roadmap'
-        
+
         self.homeLat = self.LATITUDE
         self.homeLon = self.LONGITUDE
-        
+
         self.dX = 0
         self.dY = 0
-        
+
         self.waypoints = []
-        
+
         self.InitUI()
 
     def InitUI(self):
@@ -55,18 +55,18 @@ class MainFrame(wx.Frame):
         self.SetTitle("Map")
         self.SetClientSize((840,640))
         self.Center()
-        
+
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_IDLE,self.OnIdle)
-    
+
         pnl.Bind(wx.EVT_KEY_UP, self.OnKeyDown)
 
         # Create Empty Image to preload
         self.mapHandle = Map(self.LATITUDE, self.LONGITUDE, self.ZOOM, self.WIDTH, self.HEIGHT)
         self.mapImage = self.mapHandle.retImage
         self.imageCtrl = wx.StaticBitmap(self, wx.ID_ANY, wx.BitmapFromImage(self.mapImage), pos=(0, 0))
-    
+
         # Bind Mouse Events
         self.imageCtrl.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
         self.imageCtrl.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
@@ -76,7 +76,7 @@ class MainFrame(wx.Frame):
         self.imageCtrl.Bind(wx.EVT_MOUSEWHEEL, self.OnScroll)
         self.imageCtrl.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterMap)
         self.imageCtrl.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveMap)
-        
+
         pnl.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
         pnl.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
         pnl.Bind(wx.EVT_RIGHT_DOWN, self.OnMouseRightDown)
@@ -84,13 +84,13 @@ class MainFrame(wx.Frame):
         pnl.Bind(wx.EVT_MOTION, self.OnMotion)
         pnl.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
         pnl.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
-        
+
         self.buttonLoadHome = wx.Button(self, wx.ID_ANY, 'Load Pos', pos = (650, 10), size = (90,30))
         self.Bind(wx.EVT_BUTTON, self.OnLoadHome, id = self.buttonLoadHome.GetId())
-        
+
         self.buttonLoadWaypoints = wx.Button(self, wx.ID_ANY, 'Load Waypoints', pos = (650, 50), size = (90,30))
         self.Bind(wx.EVT_BUTTON, self.OnLoadWaypoints, id = self.buttonLoadWaypoints.GetId())
-        
+
         self.Show(True)
 
     def OnQuitApp(self, event):
@@ -116,14 +116,14 @@ class MainFrame(wx.Frame):
                         print(float(temp2[3][0:2]) + float(temp2[3][2:-1])*1.0/60.0 )
                         print(float(temp2[5][0:3]) + float(temp2[5][3:-1])*1.0/60.0)
                         tempFlag = 0
-                        
+
                     except:
                         print('Error data format')
                         pass
             sc.close()
         except:
             print('Cannot open serial port.')
-        
+
         '''
         self.handle.lat = tempLat
         self.handle.lon = tempLon
@@ -132,7 +132,7 @@ class MainFrame(wx.Frame):
         self.LONGITUDE = self.handle.lon
         '''
         self.Refresh()
-        
+
     def OnLoadWaypoints(self, event):
         try:
             waypoints = [[self.homeLat, self.homeLon]]
@@ -168,7 +168,7 @@ class MainFrame(wx.Frame):
     def OnSize(self, event):
         event.Skip()
         self.Refresh()
-    
+
     def OnPaint(self, event):
         self.mapImage = self.mapHandle.retImage
         tempImage = wx.BitmapFromImage(self.mapImage)
@@ -186,7 +186,7 @@ class MainFrame(wx.Frame):
                     else:
                         self.dc.SetBrush(wx.Brush("RED", wx.SOLID))
                         self.dc.DrawCircle(self.waypointsOnImage[i][0], self.waypointsOnImage[i][1],7)
-    
+
                 for i in range(len(self.waypoints)):
                     if i < len(self.waypoints)-1:
                         self.dc.SetPen(wx.Pen(wx.GREEN, 1))
@@ -200,7 +200,7 @@ class MainFrame(wx.Frame):
         self.dc.SelectObject(wx.NullBitmap)
         self.imageCtrl.SetBitmap(tempImage)
 
-    
+
     def OnIdle(self,event):
         self.Refresh(False)
 
@@ -228,7 +228,7 @@ class MainFrame(wx.Frame):
     def OnMouseLeftUp(self, event):
         #print('left up')
         self.leftDown = 0
-    
+
     def OnMouseRightDown(self, event):
         #print('right down')
         self.rightDown = 1
@@ -242,7 +242,7 @@ class MainFrame(wx.Frame):
         if self.inMapFlag == 1 and self.leftDown == 1:
             dx = x-self.mouseX
             dy = y-self.mouseY
-            self.mapHandle.move(self.dX, self.dY)
+            self.mapHandle.move(dx, dy)
             '''
             dx = x-self.mouseX
             dy = y-self.mouseY
@@ -266,6 +266,7 @@ class MainFrame(wx.Frame):
 
     def OnScroll(self, event):
         dlevel = event.GetWheelRotation()
+        self.mapHandle.zoom(dlevel)
         # +: Down/Left, -: Up/Right
         '''
         self.ZOOM = self.ZOOM + dlevel
@@ -288,5 +289,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
