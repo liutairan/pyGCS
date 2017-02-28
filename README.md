@@ -18,3 +18,7 @@ Currently, this project is still under construction and the focus point will be 
     2. Save missions to file
     3. Edit waypoints by dragging points on the map
     4. More features
+
+# Sample:
+Screenshot: 
+![alt text](https://github.com/liutairan/pyGCS/blob/dev/dev/Sample-Figures/Snip20170228_7.png "Sample image")
