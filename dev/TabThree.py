@@ -31,6 +31,8 @@ from sys import stdout
 
 import wx
 from InputDialog import InputDialog
+from ParseMissionFile import ParseMissionFile
+from WriteMissionFile import WriteMissionFile
 
 __author__ = "Tairan Liu"
 __copyright__ = "Copyright 2017, Tairan Liu"
@@ -338,19 +340,31 @@ class TabThree(wx.Panel):
         itemId = event.GetId()
         menu = event.GetEventObject()
         menuItem = menu.FindItemById(itemId)
-        print menuItem.GetLabel()
         wildcard="Text Files (*.txt)|*.txt"
-        dlg = wx.FileDialog(self, "Choose a WP File", os.getcwd(), "", wildcard, wx.OPEN)
+        dlg = wx.FileDialog(self, "Choose a WP File", os.getcwd(), "", wildcard, wx.FD_OPEN)
         if dlg.ShowModal() == wx.ID_OK:
-            tempData = []
-            with open(dlg.GetPath(), 'r') as inf:
-                tempData = inf.readlines()
+            tempPath = dlg.GetPath()
+            tempData = ParseMissionFile(tempPath)
+            self._waypointList = tempData
+            self.deh._waypointLists[1] = self._waypointList
+            self.wpList.DeleteAllItems()
+            for i in range(len(self._waypointList)):
+                index = self.wpList.InsertStringItem(sys.maxint, str(i+1))
+                temp_line_dict = self._waypointList[i]
+                tempList = [temp_line_dict['type'], str(temp_line_dict['lat']), str(temp_line_dict['lon']), str(temp_line_dict['alt']),
+                            str(temp_line_dict['p1']), str(temp_line_dict['p2']), str(temp_line_dict['p3'])]
+                for j in range(7):
+                    self.wpList.SetStringItem(i, j+1, tempList[j])
 
     def OnPopupMenuSave(self,event):
         itemId = event.GetId()
         menu = event.GetEventObject()
         menuItem = menu.FindItemById(itemId)
-        print menuItem.GetLabel()
+        wildcard="Text Files (*.txt)|*.txt"
+        dlg = wx.FileDialog(self, "Save to WP File", os.getcwd(), "", wildcard, wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+        if dlg.ShowModal() == wx.ID_OK:
+            tempPath = dlg.GetPath()
+            WriteMissionFile(tempPath, self._waypointList)
 
     def OnClickConnect(self,event):
         if self.connectButton.GetLabel() == 'Connect':

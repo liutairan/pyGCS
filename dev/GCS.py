@@ -273,6 +273,7 @@ class MainFrame(wx.Frame):
                         if i == 0:
                             self.dc.SetBrush(wx.Brush("BLUE", wx.SOLID))
                             self.dc.DrawCircle(x, y, 7)
+                            self.dc.DrawText(str(dev+1), x, y)
                         else:
                             self.dc.SetBrush(wx.Brush("RED", wx.SOLID))
                             self.dc.DrawCircle(x, y, 7)
@@ -282,14 +283,14 @@ class MainFrame(wx.Frame):
                             x,y = self.mapHandle.GPStoImagePos(tempWP['lat'], tempWP['lon'])
                             tempWP_next = tempList[i+1]
                             x_n,y_n = self.mapHandle.GPStoImagePos(tempWP_next['lat'], tempWP_next['lon'])
-                            self.dc.SetPen(wx.Pen(wx.GREEN, 1))
+                            self.dc.SetPen(wx.Pen(wx.Colour(dev*60,255,255-dev*60), 1))
                             self.dc.DrawLines(((x, y),(x_n, y_n)))
                         else:
                             tempWP = tempList[i]
                             x,y = self.mapHandle.GPStoImagePos(tempWP['lat'], tempWP['lon'])
                             tempWP_next = tempList[0]
                             x_n,y_n = self.mapHandle.GPStoImagePos(tempWP_next['lat'], tempWP_next['lon'])
-                            self.dc.SetPen(wx.Pen(wx.GREEN, 1))
+                            self.dc.SetPen(wx.Pen(wx.RED, 1))
                             self.dc.DrawLines(((x,y),(x_n, y_n)))
                 else:
                     pass
