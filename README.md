@@ -12,9 +12,13 @@ Currently, this project is still under construction and the focus point will be 
     4. Mouse click on map to create waypoints
     5. iPhone Joystick App for single quadcopter control
     6. iPad GCS App mainly for quadcopter position monitoring
+    7. Load missions from file
+    8. Save missions to file
 
 # Features to be implemented:
-    1. Load missions from file
-    2. Save missions to file
-    3. Edit waypoints by dragging points on the map
-    4. More features
+    1. Edit waypoints by dragging points on the map
+    2. More features
+
+# Sample:
+Screenshot: 
+![alt text](https://github.com/liutairan/pyGCS/blob/dev/dev/Sample-Figures/Snip20170228_7.png "Sample image")
