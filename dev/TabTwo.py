@@ -67,7 +67,7 @@ class TabTwo(wx.Panel):
         lon = wx.StaticText(self, -1, 'Lon: ', pos = (165,70), size = (70,20))
         alt = wx.StaticText(self, -1, 'Alt: ', pos = (165,95), size = (70,20))
         numberSat = wx.StaticText(self, -1, 'No. Sat: ', pos = (165,120), size = (70,20))
-        
+
         # Inner status
         self.heading = wx.StaticText(self, -1, 'Heading: ', pos = (5,45), size = (140,20))
         self.angx = wx.StaticText(self, -1, 'ANG-X:', pos = (5,70), size = (140,20))
@@ -115,8 +115,8 @@ class TabTwo(wx.Panel):
         self.downloadWPButton1 = wx.Button(self, -1, 'Download', pos = (125,280), size = (75,20))
         self.startMissionButton1 = wx.Button(self, -1, 'Start', pos = (205,280), size = (60,20))
         self.abortMissionButton1 = wx.Button(self, -1, 'Abort', pos = (270,280), size = (60,20))
-        
-        
+
+
         # List
         self.wpList = wx.ListCtrl(self, -1, pos = (8,310),size = (480,280), style = wx.LC_REPORT|wx.BORDER_SUNKEN|wx.LC_HRULES|wx.LC_VRULES)
         self.wpList.InsertColumn(0,'ID',width=30)
@@ -127,11 +127,11 @@ class TabTwo(wx.Panel):
         self.wpList.InsertColumn(5,'P1',width=50)
         self.wpList.InsertColumn(6,'P2',width=50)
         self.wpList.InsertColumn(7,'P3',width=50)
-        
+
         # Popup Menu
         self.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.OnListRightClick, self.wpList)
-        
-        
+
+
         # Show
         self.Show(True)
 
@@ -141,19 +141,19 @@ class TabTwo(wx.Panel):
         elif global_obj.sensor_flags['acc'] == 0:
             self.accLight1.SetBackgroundColour((255,0,0))
         pass
-    
+
         if global_obj.sensor_flags['mag'] == 1:
             self.magLight1.SetBackgroundColour((0,255,0))
         elif global_obj.sensor_flags['mag'] == 0:
             self.magLight1.SetBackgroundColour((255,0,0))
         pass
-        
+
         if global_obj.sensor_flags['baro'] == 1:
             self.baroLight1.SetBackgroundColour((0,255,0))
         elif global_obj.sensor_flags['baro'] == 0:
             self.baroLight1.SetBackgroundColour((255,0,0))
         pass
-        
+
         if global_obj.sensor_flags['sonar'] == 1:
             self.sonarLight1.SetBackgroundColour((0,255,0))
         elif global_obj.sensor_flags['sonar'] == 0:
@@ -165,32 +165,32 @@ class TabTwo(wx.Panel):
         elif global_obj.sensor_flags['gps'] == 0:
             self.gpsLight1.SetBackgroundColour((255,0,0))
         pass
-        
+
         if global_obj.sensor_flags['pitot'] == 1:
             self.pitotLight1.SetBackgroundColour((0,255,0))
         elif global_obj.sensor_flags['pitot'] == 0:
             self.pitotLight1.SetBackgroundColour((255,0,0))
         pass
-        
+
         if global_obj.sensor_flags['hardware'] == 1:
             self.hwLight1.SetBackgroundColour((0,255,0))
         elif global_obj.sensor_flags['hardware'] == 0:
             self.hwLight1.SetBackgroundColour((255,0,0))
         pass
-    
+
         #print(global_obj.flightModes)
-        
+
         self.heading.SetLabel('Heading: '+str(global_obj.msp_attitude['heading']))
         self.angx.SetLabel('ANG-X: '+str(global_obj.msp_attitude['angx']))
         self.angy.SetLabel('ANG-Y: '+str(global_obj.msp_attitude['angy']))
-    
+
     def OnListRightClick(self,event):
         tempStr = event.GetText()
         if len(tempStr) > 0:
             self.OnContextListItem(event,tempStr)
         else:
             self.OnContextListEmpty(event)
-    
+
     def OnContextListItem(self, event, item):
         if not hasattr(self, "Add"):
             self.itemAdd = wx.NewId()
@@ -199,14 +199,14 @@ class TabTwo(wx.Panel):
             self.itemClear = wx.NewId()
             self.itemLoadFromFile = wx.NewId()
             self.itemSaveAll = wx.NewId()
-            
+
             self.Bind(wx.EVT_MENU, self.OnPopupMenuAdd, id=self.itemAdd)
             self.Bind(wx.EVT_MENU, lambda event: self.OnPopupMenuEdit(event, item), id=self.itemEdit)
             self.Bind(wx.EVT_MENU, lambda event: self.OnPopupMenuDelete(event, item), id=self.itemDelete)
             self.Bind(wx.EVT_MENU, self.OnPopupMenuClear, id=self.itemClear)
             self.Bind(wx.EVT_MENU, self.OnPopupMenuLoad, id=self.itemLoadFromFile)
             self.Bind(wx.EVT_MENU, self.OnPopupMenuSave, id=self.itemSaveAll)
-        
+
         # build the menu
         menu = wx.Menu()
         itemAdd = menu.Append(self.itemAdd, "Add")
@@ -215,7 +215,7 @@ class TabTwo(wx.Panel):
         itemClear = menu.Append(self.itemClear, "Clear All")
         itemLoadFromFile = menu.Append(self.itemLoadFromFile, "Load")
         itemSaveAll = menu.Append(self.itemSaveAll, "Save All")
- 
+
         # show the popup menu
         self.PopupMenu(menu)
         menu.Destroy()
@@ -228,14 +228,14 @@ class TabTwo(wx.Panel):
             self.itemClear = wx.NewId()
             self.itemLoadFromFile = wx.NewId()
             self.itemSaveAll = wx.NewId()
-            
+
             self.Bind(wx.EVT_MENU, self.OnPopupMenuAdd, id=self.itemAdd)
             self.Bind(wx.EVT_MENU, self.OnPopupMenuLoad, id=self.itemLoadFromFile)
         # build the menu
         menu = wx.Menu()
         itemAdd = menu.Append(self.itemAdd, "Add")
         itemLoadFromFile = menu.Append(self.itemLoadFromFile, "Load")
- 
+
         # show the popup menu
         self.PopupMenu(menu)
         menu.Destroy()
@@ -244,7 +244,7 @@ class TabTwo(wx.Panel):
         itemId = event.GetId()
         menu = event.GetEventObject()
         menuItem = menu.FindItemById(itemId)
-        
+
         tempCount = self.wpList.GetItemCount()
         dlg = InputDialog(self, "Add WP", str(tempCount+1))
         if dlg.ShowModal() == wx.ID_OK:
@@ -261,7 +261,7 @@ class TabTwo(wx.Panel):
         menu = event.GetEventObject()
         menuItem = menu.FindItemById(itemId)
         dlg = InputDialog(self, "Edit WP", str(int(item)))
-        
+
         temp1 = self.wpList.GetItemText(int(item)-1, col=1)
         dlg.type.SetValue(temp1)
         temp2 = self.wpList.GetItemText(int(item)-1, col=2)
@@ -276,8 +276,8 @@ class TabTwo(wx.Panel):
         dlg.p2Text.SetValue(temp6)
         temp7 = self.wpList.GetItemText(int(item)-1, col=7)
         dlg.p3Text.SetValue(temp7)
-        
-        
+
+
         if dlg.ShowModal() == wx.ID_OK:
             tempList = dlg.GetValue()
             index = int(item)-1
@@ -289,7 +289,7 @@ class TabTwo(wx.Panel):
         itemId = event.GetId()
         menu = event.GetEventObject()
         menuItem = menu.FindItemById(itemId)
-        
+
         self.wpList.DeleteItem(int(item)-1)
         for i in range(self.wpList.GetItemCount()):
             self.wpList.SetStringItem(i,0,str(i+1))
@@ -315,7 +315,7 @@ class TabTwo(wx.Panel):
             tempData = []
             with open(dlg.GetPath(), 'r') as inf:
                 tempData = inf.readlines()
-    
+
     def OnPopupMenuSave(self,event):
         itemId = event.GetId()
         menu = event.GetEventObject()
@@ -335,3 +335,20 @@ class TabTwo(wx.Panel):
             self.connectLight1.SetBackgroundColour((255,0,0))
             self.connectButton.SetLabel('Connect')
             self.deh.addressList = [[], self.deh.addressList[1], self.deh.addressList[2]]
+
+    def OnAdd(self, templat, templon):
+        tempCount = self.wpList.GetItemCount()
+        dlg = InputDialog(self, "Add WP", str(tempCount+1))
+        temp2 = str(templat)
+        dlg.latText.SetValue(temp2)
+        temp3 = str(templon)
+        dlg.lonText.SetValue(temp3)
+
+        if dlg.ShowModal() == wx.ID_OK:
+            tempList = dlg.GetValue()
+            index = self.wpList.InsertStringItem(sys.maxint, str(tempCount+1))
+            for i in range(7):
+                self.wpList.SetStringItem(index, i+1, tempList[i])
+        else:
+            pass
+        dlg.Destroy()

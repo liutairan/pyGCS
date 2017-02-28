@@ -100,6 +100,8 @@ class MainFrame(wx.Frame):
         self.inMapFlag = 0
         self.leftDown = 0
         self.rightDown = 0
+        self.shiftDown = 0
+        self.currentTab = 0
 
         # Map Info
         self._width = 640
@@ -109,7 +111,7 @@ class MainFrame(wx.Frame):
         self._originLat  =  30.408158 #37.7913838
         self._originLon = -91.179533 #-79.44398934
 
-        self._zoom = 21
+        self._zoom = 19
         self._maptype = 'hybrid' #'roadmap'
 
         self._homeLat = self._originLat
@@ -123,7 +125,7 @@ class MainFrame(wx.Frame):
         self.InitUI()
 
     def InitUI(self):
-        pnl = wx.Panel(self)
+        self.pnl = wx.Panel(self)
         self.SetSize((1150,640))
         self.SetTitle("GCS")
         self.SetClientSize((1150,640))
@@ -133,7 +135,12 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_IDLE,self.OnIdle)
-        self.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
+
+        self.pnl.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.pnl.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
+        self.pnl.SetFocus()
+        #pnl.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        #pnl.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
         #self.Bind(wx.EVT_CONTEXT_MENU, self.OnContext)
 
         # Panel Elements
@@ -152,44 +159,97 @@ class MainFrame(wx.Frame):
         self.imageCtrl.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterMap)
         self.imageCtrl.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveMap)
 
-        pnl.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
-        pnl.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
-        pnl.Bind(wx.EVT_RIGHT_DOWN, self.OnMouseRightDown)
-        pnl.Bind(wx.EVT_RIGHT_UP, self.OnMouseRightUp)
-        pnl.Bind(wx.EVT_MOTION, self.OnMotion)
+        self.pnl.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
+        self.pnl.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
+        self.pnl.Bind(wx.EVT_RIGHT_DOWN, self.OnMouseRightDown)
+        self.pnl.Bind(wx.EVT_RIGHT_UP, self.OnMouseRightUp)
+        self.pnl.Bind(wx.EVT_MOTION, self.OnMotion)
         #self.Bind(wx.EVT_MOUSEWHEEL, self.OnScroll)
-        pnl.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
-        pnl.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
+        self.pnl.Bind(wx.EVT_ENTER_WINDOW, self.OnEnterWindow)
+        self.pnl.Bind(wx.EVT_LEAVE_WINDOW, self.OnLeaveWindow)
 
+        self.imageCtrl.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.imageCtrl.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
         # Tabs
-        nb = wx.Notebook(pnl, pos = (642,0), size = (510, 615))
+        self.nb = wx.Notebook(self.pnl, pos = (642,0), size = (510, 615))
 
-        tab1 = TabOne(nb, self.dataExchangeHandle)
-        tab2 = TabTwo(nb, self.dataExchangeHandle)
-        tab3 = TabThree(nb, self.dataExchangeHandle)
-        tab4 = TabFour(nb, self.dataExchangeHandle)
+        self.tab1 = TabOne(self.nb, self.dataExchangeHandle)
+        self.tab2 = TabTwo(self.nb, self.dataExchangeHandle)
+        self.tab3 = TabThree(self.nb, self.dataExchangeHandle)
+        self.tab4 = TabFour(self.nb, self.dataExchangeHandle)
 
         # Add the windows to tabs and name them.
-        nb.AddPage(tab1, "Overview")
-        nb.AddPage(tab2, "Quad 1")
-        nb.AddPage(tab3, "Quad 2")
-        nb.AddPage(tab4, "Quad 3")
+        self.nb.AddPage(self.tab1, "Overview")
+        self.nb.AddPage(self.tab2, "Quad 1")
+        self.nb.AddPage(self.tab3, "Quad 2")
+        self.nb.AddPage(self.tab4, "Quad 3")
 
+        self.nb.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.OnPageChanged)
+        self.nb.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGING, self.OnPageChanging)
+
+        self.nb.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.nb.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
+
+        self.tab1.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.tab1.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
+        self.tab2.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.tab2.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
+        self.tab3.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.tab3.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
+        self.tab4.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.tab4.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
+        #
+        #self.imageCtrl.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        #self.imageCtrl.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
         # Button Events
         #buttonStaticBox = wx.StaticBox(pnl, -1, 'Buttons', pos = (645,0), size = (300,240))
         #flightStaticBox = wx.StaticBox(pnl, -1, 'Flight Data', pos = (645,245), size = (300,240))
 
+        # Buttons
+        self.incZoomButton = wx.Button(self.pnl, -1, '+', pos = (642, 610), size = (25,20))
+        self.Bind(wx.EVT_BUTTON, self.OnIncZoom, self.incZoomButton)
+        self.decZoomButton = wx.Button(self.pnl, -1, '-', pos = (667, 610), size = (25,20))
+        self.Bind(wx.EVT_BUTTON, self.OnDecZoom, self.decZoomButton)
         # Show
         self.Show(True)
 
     def OnQuitApp(self, event):
         self.Close()
 
+    def OnPageChanged(self, event):
+        self.currentTab = event.GetSelection()
+        event.Skip()
+
+    def OnPageChanging(self, event):
+        old = event.GetOldSelection()
+        new = event.GetSelection()
+        sel = self.nb.GetSelection()
+        #print 'OnPageChanging, old:%d, new:%d, sel:%d\n' % (old, new, sel)
+        event.Skip()
+
+
+    def OnKeyDown(self, event):
+        keyNumber = event.GetKeyCode()
+        print(keyNumber)
+        if keyNumber == wx.WXK_SHIFT:
+            self.shiftDown = 1
+
     def OnKeyUp(self, event):
         keyNumber = event.GetKeyCode()
-        #print(keyNumber)
         if keyNumber == 27:
             self.Close()
+        elif keyNumber == wx.WXK_SHIFT:
+            self.shiftDown = 0
+
+    def OnIncZoom(self, event):
+        self._zoom = self._zoom + 1
+        self.mapHandle.zoom(1)
+        self.Refresh()
+
+    def OnDecZoom(self, event):
+        self._zoom = self._zoom - 1
+        self.mapHandle.zoom(-1)
+        self.Refresh()
 
     def OnSize(self, event):
         event.Skip()
@@ -243,6 +303,7 @@ class MainFrame(wx.Frame):
 
     def OnEnterMap(self, event):
         #print('Enter Map')
+        self.pnl.SetFocus()
         self.inMapFlag = 1
 
     def OnLeaveWindow(self, event):
@@ -262,9 +323,17 @@ class MainFrame(wx.Frame):
         #print('left up')
         self.leftDown = 0
 
+
     def OnMouseRightDown(self, event):
         #print('right down')
         self.rightDown = 1
+        self.mouseX, self.mouseY = event.GetPosition()
+        _point_lat, _point_lon = self.mapHandle.PostoGPS(self.mouseX, self.mouseY)
+        _point_x, _point_y = self.mapHandle.GPStoImagePos(_point_lat, _point_lon)
+        print(self.currentTab)
+        if self.currentTab == 1:
+            self.tab2.OnAdd(_point_lat, _point_lon)
+
 
     def OnMouseRightUp(self, event):
         #print('right up')
@@ -277,41 +346,12 @@ class MainFrame(wx.Frame):
             dx = x-self.mouseX
             dy = y-self.mouseY
             self.mapHandle.move(dx, dy)
-            '''
-            dx = x-self.mouseX
-            dy = y-self.mouseY
-            self.dX = self.dX + dx
-            self.dY = self.dY + dy
-            #print(x-self.mouseX, y-self.mouseY)
-            #self.mouseX = x
-            #self.mouseY = y
-            latStep, lonStep = CalStepFromGPS(self.handle.lat, self.handle.lon, zoom = self.handle.zoom)
-            newLat = self.handle.lat + dy/(1.0*self.HEIGHT)*latStep
-            newLon = self.handle.lon - dx/(1.0*self.WIDTH)*lonStep
-            self.handle.lat = newLat
-            self.handle.lon = newLon
-            self.mapImage = PreloadMap(self.handle)
-            self.LATITUDE = self.handle.lat
-            self.LONGITUDE = self.handle.lon
-            #print(self.handle.LATITUDE, self.handle.LONGITUDE)
-            '''
             self.Refresh()
 
     def OnScroll(self, event):
         dlevel = event.GetWheelRotation()
-        self.mapHandle.zoom(dlevel)
+        #self.mapHandle.zoom(dlevel/20)
         # +: Down/Left, -: Up/Right
-        '''
-        self.ZOOM = self.ZOOM + dlevel
-        if self.ZOOM > 21:
-            self.ZOOM = 21
-        elif self.ZOOM < 3:
-            self.ZOOM = 3
-        print(self.ZOOM)
-        '''
-        #self.handle.zoom = self.ZOOM
-        #self.goompy = GooMPy(self.WIDTH, self.HEIGHT, self.LATITUDE, self.LONGITUDE, self.ZOOM, self.MAPTYPE)
-        #self.mapImage = PreloadMap(self.handle)
         self.Refresh()
 
 def main():
