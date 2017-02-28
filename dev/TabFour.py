@@ -31,6 +31,8 @@ from sys import stdout
 
 import wx
 from InputDialog import InputDialog
+from ParseMissionFile import ParseMissionFile
+from WriteMissionFile import WriteMissionFile
 
 __author__ = "Tairan Liu"
 __copyright__ = "Copyright 2017, Tairan Liu"
@@ -71,8 +73,8 @@ class TabFour(wx.Panel):
 
         # Inner status
         self.heading = wx.StaticText(self, -1, 'Heading: ', pos = (5,45), size = (140,20))
-        self.angx = wx.StaticText(self, -1, 'ANG-X', pos = (5,70), size = (140,20))
-        self.angy = wx.StaticText(self, -1, 'ANG-Y', pos = (5,95), size = (140,20))
+        self.angx = wx.StaticText(self, -1, 'ANG-X:', pos = (5,70), size = (140,20))
+        self.angy = wx.StaticText(self, -1, 'ANG-Y:', pos = (5,95), size = (140,20))
 
         # Sensors
         self.accLight1 = wx.StaticText(self, -1, 'ACC', pos = (325,45), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
@@ -343,17 +345,30 @@ class TabFour(wx.Panel):
         menuItem = menu.FindItemById(itemId)
         print menuItem.GetLabel()
         wildcard="Text Files (*.txt)|*.txt"
-        dlg = wx.FileDialog(self, "Choose a WP File", os.getcwd(), "", wildcard, wx.OPEN)
+        dlg = wx.FileDialog(self, "Choose a WP File", os.getcwd(), "", wildcard, wx.FD_OPEN)
         if dlg.ShowModal() == wx.ID_OK:
-            tempData = []
-            with open(dlg.GetPath(), 'r') as inf:
-                tempData = inf.readlines()
+            tempPath = dlg.GetPath()
+            tempData = ParseMissionFile(tempPath)
+            self._waypointList = tempData
+            self.deh._waypointLists[2] = self._waypointList
+            self.wpList.DeleteAllItems()
+            for i in range(len(self._waypointList)):
+                index = self.wpList.InsertStringItem(sys.maxint, str(i+1))
+                temp_line_dict = self._waypointList[i]
+                tempList = [temp_line_dict['type'], str(temp_line_dict['lat']), str(temp_line_dict['lon']), str(temp_line_dict['alt']),
+                            str(temp_line_dict['p1']), str(temp_line_dict['p2']), str(temp_line_dict['p3'])]
+                for j in range(7):
+                    self.wpList.SetStringItem(i, j+1, tempList[j])
 
     def OnPopupMenuSave(self,event):
         itemId = event.GetId()
         menu = event.GetEventObject()
         menuItem = menu.FindItemById(itemId)
-        print menuItem.GetLabel()
+        wildcard="Text Files (*.txt)|*.txt"
+        dlg = wx.FileDialog(self, "Save to WP File", os.getcwd(), "", wildcard, wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+        if dlg.ShowModal() == wx.ID_OK:
+            tempPath = dlg.GetPath()
+            WriteMissionFile(tempPath, self._waypointList)
 
     def OnClickConnect(self,event):
         if self.connectButton.GetLabel() == 'Connect':
