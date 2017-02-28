@@ -253,6 +253,16 @@ class TabThree(wx.Panel):
             index = self.wpList.InsertStringItem(sys.maxint, str(tempCount+1))
             for i in range(7):
                 self.wpList.SetStringItem(index, i+1, tempList[i])
+            self._waypointList.append({'id':index+1,
+                                       'type':tempList[0],
+                                       'lat':float(tempList[1]),
+                                       'lon':float(tempList[2]),
+                                       'alt':float(tempList[3]),
+                                       'p1':int(tempList[4]),
+                                       'p2':int(tempList[5]),
+                                       'p3':int(tempList[6])
+                                       })
+            self.deh._waypointLists[1] = self._waypointList
         else:
             pass
         dlg.Destroy()
@@ -285,6 +295,16 @@ class TabThree(wx.Panel):
             index = int(item)-1
             for i in range(7):
                 self.wpList.SetStringItem(index, i+1, tempList[i])
+            self._waypointList[index] = {'id':index+1,
+                                         'type':tempList[0],
+                                         'lat':float(tempList[1]),
+                                         'lon':float(tempList[2]),
+                                         'alt':float(tempList[3]),
+                                         'p1':int(tempList[4]),
+                                         'p2':int(tempList[5]),
+                                         'p3':int(tempList[6])
+                                         }
+            self.deh._waypointLists[1] = self._waypointList
         dlg.Destroy()
 
     def OnPopupMenuDelete(self,event, item):
@@ -292,9 +312,15 @@ class TabThree(wx.Panel):
         menu = event.GetEventObject()
         menuItem = menu.FindItemById(itemId)
 
-        self.wpList.DeleteItem(int(item)-1)
+        index = int(item)-1
+        self.wpList.DeleteItem(index)
         for i in range(self.wpList.GetItemCount()):
             self.wpList.SetStringItem(i,0,str(i+1))
+
+        self._waypointList.pop(index)
+        for i in range(len(self._waypointList)):
+            self._waypointList[i]['id'] = i+1
+        self.deh._waypointLists[1] = self._waypointList
 
     def OnPopupMenuClear(self,event):
         itemId = event.GetId()
@@ -303,6 +329,8 @@ class TabThree(wx.Panel):
         dlg = wx.MessageDialog(self, "Clear all WPs", "Warning", wx.ICON_EXCLAMATION|wx.YES_NO)
         if dlg.ShowModal() == wx.ID_YES:
             self.wpList.DeleteAllItems()
+            self._waypointList = []
+            self.deh._waypointLists[1] = self._waypointList
         else:
             pass
 
