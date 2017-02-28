@@ -48,6 +48,7 @@ class TabTwo(wx.Panel):
         self.deh.bind_to(self.OnUpdate)
         self.addr_long = '\x00\x13\xA2\x00\x40\xC1\x43\x06'
         self.addr = '\xFF\xFE'
+        self._waypointList = []
         self.InitUI()
 
     def InitUI(self):
@@ -349,6 +350,16 @@ class TabTwo(wx.Panel):
             index = self.wpList.InsertStringItem(sys.maxint, str(tempCount+1))
             for i in range(7):
                 self.wpList.SetStringItem(index, i+1, tempList[i])
+            self._waypointList.append({'id':index+1,
+                                       'type':tempList[0],
+                                       'lat':float(tempList[1]),
+                                       'lon':float(tempList[2]),
+                                       'alt':float(tempList[3]),
+                                       'p1':int(tempList[4]),
+                                       'p2':int(tempList[5]),
+                                       'p3':int(tempList[6])
+                                       })
+            self.deh._waypointLists[0] = self._waypointList
         else:
             pass
         dlg.Destroy()
