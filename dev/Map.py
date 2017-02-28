@@ -129,45 +129,48 @@ class Map(object):
         self.loadImage()
 
     def _init_tile_index(self):
-        # level 21
-        latDict = []
-        latitude = self._originLat
-        latDict.append(latitude)
-        for i in range(1000):
-            sinlat = math.sin(math.radians(latitude))
-            latpix = _EARTHPIX - _pixrad * math.log((1 + sinlat)/(1 - sinlat)) / 2
-            newlat = self._pix_to_lat(0, latpix, 3, 640, 21)
-            latitude = newlat
+        for templevel in range(9,22):
+            # level number: templevel
+            iter_steps = 2 ** (templevel-9)
+            latDict = []
+            latitude = self._originLat
             latDict.append(latitude)
-        latitude = self._originLat
-        for i in range(1000):
-            sinlat = math.sin(math.radians(latitude))
-            latpix = _EARTHPIX - _pixrad * math.log((1 + sinlat)/(1 - sinlat)) / 2
-            newlat = self._pix_to_lat(2, latpix, 3, 640, 21)
-            latitude = newlat
-            latDict.append(latitude)
-        self.latlonDict['21']['lat'] = sorted(latDict)
+            for i in range(iter_steps):
+                sinlat = math.sin(math.radians(latitude))
+                latpix = _EARTHPIX - _pixrad * math.log((1 + sinlat)/(1 - sinlat)) / 2
+                newlat = self._pix_to_lat(0, latpix, 3, 640, int(templevel))
+                latitude = newlat
+                latDict.append(latitude)
+            latitude = self._originLat
+            for i in range(iter_steps):
+                sinlat = math.sin(math.radians(latitude))
+                latpix = _EARTHPIX - _pixrad * math.log((1 + sinlat)/(1 - sinlat)) / 2
+                newlat = self._pix_to_lat(2, latpix, 3, 640, int(templevel))
+                latitude = newlat
+                latDict.append(latitude)
+            self.latlonDict[str(int(templevel))]['lat'] = sorted(latDict)
 
-        lonDict = []
-        longitude = self._originLon
-        lonDict.append(longitude)
-        for i in range(1000):
-            lonpix = _EARTHPIX + longitude * math.radians(_pixrad)
-            newlon = self._pix_to_lon(0, lonpix, 3, 640, 21)
-            longitude = newlon
+            lonDict = []
+            longitude = self._originLon
             lonDict.append(longitude)
-        longitude = self._originLon
-        for i in range(1000):
-            lonpix = _EARTHPIX + longitude * math.radians(_pixrad)
-            newlon = self._pix_to_lon(2, lonpix, 3, 640, 21)
-            longitude = newlon
-            lonDict.append(longitude)
-        self.latlonDict['21']['lon'] = sorted(lonDict)
+            for i in range(iter_steps):
+                lonpix = _EARTHPIX + longitude * math.radians(_pixrad)
+                newlon = self._pix_to_lon(0, lonpix, 3, 640, int(templevel))
+                longitude = newlon
+                lonDict.append(longitude)
+            longitude = self._originLon
+            for i in range(iter_steps):
+                lonpix = _EARTHPIX + longitude * math.radians(_pixrad)
+                newlon = self._pix_to_lon(2, lonpix, 3, 640, int(templevel))
+                longitude = newlon
+                lonDict.append(longitude)
+            self.latlonDict[str(int(templevel))]['lon'] = sorted(lonDict)
 
 
     def _pos_to_tile_index(self, lat, lon, zoomlevel):
-        nearLat = sorted(enumerate(self.latlonDict['21']['lat']), key=lambda x: abs(x[1]-lat))
-        nearLon = sorted(enumerate(self.latlonDict['21']['lon']), key=lambda x: abs(x[1]-lon))
+        level_dict = str(int(zoomlevel))
+        nearLat = sorted(enumerate(self.latlonDict[level_dict]['lat']), key=lambda x: abs(x[1]-lat))
+        nearLon = sorted(enumerate(self.latlonDict[level_dict]['lon']), key=lambda x: abs(x[1]-lon))
         x = nearLon[0]
         y = nearLat[0]
         return x,y
@@ -211,15 +214,13 @@ class Map(object):
 
 
     def zoom(self, dlevel):
-        pass
-        '''
-        self.zoomlevel = self.zoomlevel + int(dlevel/10.0)
+        self.zoomlevel = self.zoomlevel + int(dlevel)
         if self.zoomlevel > 21:
             self.zoomlevel = 21
-        elif self.zoomlevel < 3:
-            self.zoomlevel = 3
+        elif self.zoomlevel < 9:
+            self.zoomlevel = 9
         self.loadImage()
-        '''
+
 
     def updateMap(self):
         pass
@@ -275,18 +276,26 @@ class Map(object):
         return myWxImage
 
 
-    def GPStoImagePos(self, waypoints, tempLat, tempLon, zoomlevel):
-        latStep, lonStep = CalStepFromGPS(tempLat, tempLon, zoom = zoomlevel)
-        coordinates = []
-        for i in range(len(waypoints)):
-            x = int((waypoints[i][1]-(tempLon-lonStep/2.0))/lonStep*640.0)
-            y = int(-(waypoints[i][0]-(tempLat+latStep/2.0))/latStep*640.0)
-            print(x,y)
-            coordinates.append([x,y])
-        return coordinates
+    def GPStoImagePos(self, tempLat, tempLon):
+        latStep, lonStep = self._local_tile_step()
+        temp_point_x = ((tempLon - self._centerLon)/lonStep*(1.0*_TILESIZE) + 320)
+        temp_point_y = (320 - (tempLat - self._centerLat)/latStep*(1.0*_TILESIZE))
+        point_x = int(temp_point_x)
+        point_y = int(temp_point_y)
+        if (temp_point_x - int(temp_point_x)) >= 0.5:
+            point_x = int(temp_point_x + 1)
+        if (temp_point_y - int(temp_point_y)) >= 0.5:
+            point_y = int(temp_point_y + 1)
+        return point_x,point_y
+
 
     def PostoGPS(self, x, y):
-        pass
+        latStep, lonStep = self._local_tile_step()
+        local_x_to_lon = (x-320)/(_TILESIZE*1.0) * lonStep
+        local_y_to_lat = (y-320)/(_TILESIZE*1.0) * latStep
+        point_lon = self._centerLon + local_x_to_lon
+        point_lat = self._centerLat - local_y_to_lat
+        return point_lat,point_lon
 
     def localLoadImage(self):
         localMap, missingMap = self._findLocalImage()
@@ -315,6 +324,7 @@ class Map(object):
             pass
         try:
             local, missing = self._findImages(areas)
+            #print(local)
             return local, missing
         except:
             pass
@@ -359,8 +369,8 @@ class Map(object):
             col_num = i % 3
             x_ind = localTiles[i][1]
             y_ind = localTiles[i][2]
-            lat = self.latlonDict['21']['lat'][y_ind]
-            lon = self.latlonDict['21']['lon'][x_ind]
+            lat = self.latlonDict[str(int(self.zoomlevel))]['lat'][y_ind]
+            lon = self.latlonDict[str(int(self.zoomlevel))]['lon'][x_ind]
             lat_rounded = self._roundto(lat, 6)
             lon_rounded = self._roundto(lon, 6)
             if lat_rounded > max_lat:
@@ -404,8 +414,8 @@ class Map(object):
         zoomlevel = tileIndex[0]
         x = tileIndex[1]
         y = tileIndex[2]
-        lat = self.latlonDict['21']['lat'][x]
-        lon = self.latlonDict['21']['lon'][y]
+        lat = self.latlonDict[str(int(zoomlevel))]['lat'][x]
+        lon = self.latlonDict[str(int(zoomlevel))]['lon'][y]
         lat_rounded = self._roundto(lat, 6)
         lon_rounded = self._roundto(lon, 6)
         self._grab_tile(lat_rounded, lon_rounded, zoomlevel, self.maptype, _TILESIZE, 1./_GRABRATE)
@@ -653,13 +663,3 @@ class Map(object):
             zoomlevel = zoomLevel
             print('Zoom Level: '+str(zoomlevel))
         return lat, lon, zoomlevel
-
-    def GPStoImagePos(waypoints, tempLat, tempLon, zoomlevel):
-        latStep, lonStep = CalStepFromGPS(tempLat, tempLon, zoom = zoomlevel)
-        coordinates = []
-        for i in range(len(waypoints)):
-            x = int((waypoints[i][1]-(tempLon-lonStep/2.0))/lonStep*640.0)
-            y = int(-(waypoints[i][0]-(tempLat+latStep/2.0))/latStep*640.0)
-            print(x,y)
-            coordinates.append([x,y])
-        return coordinates

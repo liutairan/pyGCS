@@ -36,7 +36,7 @@ class MainFrame(wx.Frame):
         self.LATITUDE  =  30.408158 #37.7913838
         self.LONGITUDE = -91.179533 #-79.44398934
 
-        self.ZOOM = 21
+        self.ZOOM = 20
         self.MAPTYPE = 'hybrid' #'roadmap'
 
         self.homeLat = self.LATITUDE
