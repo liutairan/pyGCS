@@ -261,36 +261,40 @@ class MainFrame(wx.Frame):
         self.dc = wx.MemoryDC(tempImage)
 
         self.dc.SetPen(wx.Pen("BLACK", style = wx.TRANSPARENT))
-        '''
-        self.image = self.mapImage
-        tempImage = wx.BitmapFromImage(PilImageToWxImage(self.image))
-        self.dc = wx.MemoryDC(tempImage)
-
-        self.dc.SetPen(wx.Pen("BLACK", style = wx.TRANSPARENT))
 
         try:
-            if len(self.waypoints) > 0:
-                # Points
-                for i in range(len(self.waypoints)):
-                    if i == 0:
-                        self.dc.SetBrush(wx.Brush("BLUE", wx.SOLID))
-                        self.dc.DrawCircle(self.waypointsOnImage[i][0], self.waypointsOnImage[i][1],7)
-                    else:
-                        self.dc.SetBrush(wx.Brush("RED", wx.SOLID))
-                        self.dc.DrawCircle(self.waypointsOnImage[i][0], self.waypointsOnImage[i][1],7)
-
-                for i in range(len(self.waypoints)):
-                    if i < len(self.waypoints)-1:
-                        self.dc.SetPen(wx.Pen(wx.GREEN, 1))
-                        self.dc.DrawLines(((self.waypointsOnImage[i][0], self.waypointsOnImage[i][1]),(self.waypointsOnImage[i+1][0], self.waypointsOnImage[i+1][1])))
-                    else:
-                        self.dc.SetPen(wx.Pen(wx.GREEN, 1))
-                        self.dc.DrawLines(((self.waypointsOnImage[i][0], self.waypointsOnImage[i][1]),(self.waypointsOnImage[0][0], self.waypointsOnImage[0][1])))
+            for dev in range(3):
+                self.dc.SetPen(wx.Pen("BLACK", style = wx.TRANSPARENT))
+                tempList = self.dataExchangeHandle._waypointLists[dev]
+                if len(tempList) > 0:
+                    for i in range(len(tempList)):
+                        tempWP = tempList[i]
+                        x,y = self.mapHandle.GPStoImagePos(tempWP['lat'], tempWP['lon'])
+                        if i == 0:
+                            self.dc.SetBrush(wx.Brush("BLUE", wx.SOLID))
+                            self.dc.DrawCircle(x, y, 7)
+                        else:
+                            self.dc.SetBrush(wx.Brush("RED", wx.SOLID))
+                            self.dc.DrawCircle(x, y, 7)
+                    for i in range(len(tempList)):
+                        if i < len(tempList)-1:
+                            tempWP = tempList[i]
+                            x,y = self.mapHandle.GPStoImagePos(tempWP['lat'], tempWP['lon'])
+                            tempWP_next = tempList[i+1]
+                            x_n,y_n = self.mapHandle.GPStoImagePos(tempWP_next['lat'], tempWP_next['lon'])
+                            self.dc.SetPen(wx.Pen(wx.GREEN, 1))
+                            self.dc.DrawLines(((x, y),(x_n, y_n)))
+                        else:
+                            tempWP = tempList[i]
+                            x,y = self.mapHandle.GPStoImagePos(tempWP['lat'], tempWP['lon'])
+                            tempWP_next = tempList[0]
+                            x_n,y_n = self.mapHandle.GPStoImagePos(tempWP_next['lat'], tempWP_next['lon'])
+                            self.dc.SetPen(wx.Pen(wx.GREEN, 1))
+                            self.dc.DrawLines(((x,y),(x_n, y_n)))
+                else:
+                    pass
         except:
             pass
-        self.dc.SelectObject(wx.NullBitmap)
-        self.imageCtrl.SetBitmap(tempImage)
-        '''
         self.dc.SelectObject(wx.NullBitmap)
         self.imageCtrl.SetBitmap(tempImage)
 
@@ -330,9 +334,14 @@ class MainFrame(wx.Frame):
         self.mouseX, self.mouseY = event.GetPosition()
         _point_lat, _point_lon = self.mapHandle.PostoGPS(self.mouseX, self.mouseY)
         _point_x, _point_y = self.mapHandle.GPStoImagePos(_point_lat, _point_lon)
-        print(self.currentTab)
+        #print(self.currentTab)
         if self.currentTab == 1:
             self.tab2.OnAdd(_point_lat, _point_lon)
+        if self.currentTab == 2:
+            self.tab3.OnAdd(_point_lat, _point_lon)
+        if self.currentTab == 3:
+            self.tab4.OnAdd(_point_lat, _point_lon)
+        self.Refresh()
 
 
     def OnMouseRightUp(self, event):

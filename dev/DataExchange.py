@@ -59,7 +59,7 @@ class WorkerProcess(multiprocessing.Process):
         self.addressList = addresslist
         self.sch = SerialCommunication(self.serialPort, self.addressList)
         self.result_queue = result_queue
-    
+
     def run(self):
         while not self.exit.is_set():
             self.sch.RegularLoadInfo()
@@ -81,6 +81,7 @@ class DataExchange(object):
     def __init__(self):
         self._observers = []
         self._addressList = [[],[],[]]
+        self._waypointLists = [[],[],[]]
         self._serialPort = ''
         self._serialOn = False
         self.workerSerial = None
@@ -177,7 +178,7 @@ class DataExchange(object):
                             callback(tempObj)
                     else:
                         pass
-        
+
             except Queue.Empty:
                 pass
 
