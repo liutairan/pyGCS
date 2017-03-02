@@ -186,6 +186,7 @@ class TabThree(wx.Panel):
         self.heading.SetLabel('Heading: '+str(global_obj.msp_attitude['heading']))
         self.angx.SetLabel('ANG-X: '+str(global_obj.msp_attitude['angx']))
         self.angy.SetLabel('ANG-Y: '+str(global_obj.msp_attitude['angy']))
+        self.voltLight1.SetLabel(str(global_obj.msp_analog['vbat']/10.0)+' V')
 
     def OnListRightClick(self,event):
         tempStr = event.GetText()

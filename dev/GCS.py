@@ -126,9 +126,9 @@ class MainFrame(wx.Frame):
 
     def InitUI(self):
         self.pnl = wx.Panel(self)
-        self.SetSize((1150,640))
+        self.SetSize((1150,670))
         self.SetTitle("GCS")
-        self.SetClientSize((1150,640))
+        self.SetClientSize((1150,670))
         self.Center()
 
         # Events
@@ -171,7 +171,7 @@ class MainFrame(wx.Frame):
         self.imageCtrl.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
         self.imageCtrl.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
         # Tabs
-        self.nb = wx.Notebook(self.pnl, pos = (642,0), size = (510, 615))
+        self.nb = wx.Notebook(self.pnl, pos = (642,0), size = (510, 635))
 
         self.tab1 = TabOne(self.nb, self.dataExchangeHandle)
         self.tab2 = TabTwo(self.nb, self.dataExchangeHandle)
@@ -206,10 +206,12 @@ class MainFrame(wx.Frame):
         #flightStaticBox = wx.StaticBox(pnl, -1, 'Flight Data', pos = (645,245), size = (300,240))
 
         # Buttons
-        self.incZoomButton = wx.Button(self.pnl, -1, '+', pos = (642, 610), size = (25,20))
+        self.incZoomButton = wx.Button(self.pnl, -1, '+', pos = (2, 642), size = (25,20))
         self.Bind(wx.EVT_BUTTON, self.OnIncZoom, self.incZoomButton)
-        self.decZoomButton = wx.Button(self.pnl, -1, '-', pos = (667, 610), size = (25,20))
+        self.decZoomButton = wx.Button(self.pnl, -1, '-', pos = (27, 642), size = (25,20))
         self.Bind(wx.EVT_BUTTON, self.OnDecZoom, self.decZoomButton)
+        self.autoZoomButton = wx.Button(self.pnl, -1, 'Auto Zoom', pos = (55, 642), size = (85,20))
+        self.Bind(wx.EVT_BUTTON, self.OnAutoZoom, self.autoZoomButton)
         # Show
         self.Show(True)
 
@@ -249,6 +251,12 @@ class MainFrame(wx.Frame):
     def OnDecZoom(self, event):
         self._zoom = self._zoom - 1
         self.mapHandle.zoom(-1)
+        self.Refresh()
+
+    def OnAutoZoom(self, event):
+        # auto select the zoom level so that all the waypoints are shown in the frame
+        #self._zoom = self._zoom - 1
+        #self.mapHandle.zoom(-1)
         self.Refresh()
 
     def OnSize(self, event):
@@ -363,6 +371,14 @@ class MainFrame(wx.Frame):
         #self.mapHandle.zoom(dlevel/20)
         # +: Down/Left, -: Up/Right
         self.Refresh()
+
+    def InPointArea(self, x, y):
+        if self.currentTab == 1:
+            pass
+        if self.currentTab == 2:
+            pass
+        if self.currentTab == 3:
+            pass
 
 def main():
     map = wx.App()
