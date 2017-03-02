@@ -109,7 +109,7 @@ class TabTwo(wx.Panel):
         self.navLight1.SetBackgroundColour((220,220,220))
         self.gcsLight1 = wx.StaticText(self, -1, 'GCS', pos = (405,183), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.gcsLight1.SetBackgroundColour((220,220,220))
-        self.voltLight1 = wx.StaticText(self, -1, '0.0V', pos = (405,203), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.voltLight1 = wx.StaticText(self, -1, '0.0 V', pos = (405,203), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.voltLight1.SetBackgroundColour((220,220,220))
 
         # Buttons
@@ -186,6 +186,7 @@ class TabTwo(wx.Panel):
         self.heading.SetLabel('Heading: '+str(global_obj.msp_attitude['heading']))
         self.angx.SetLabel('ANG-X: '+str(global_obj.msp_attitude['angx']))
         self.angy.SetLabel('ANG-Y: '+str(global_obj.msp_attitude['angy']))
+        self.voltLight1.SetLabel(str(global_obj.msp_analog['vbat']/10.0)+' V')
 
     def OnListRightClick(self,event):
         tempStr = event.GetText()

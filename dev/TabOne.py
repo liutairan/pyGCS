@@ -52,7 +52,7 @@ class WorkerVoiceThread(threading.Thread):
         self.counter = 0
         self._notify_window = notify_window
         self.abort = False
-    
+
     def run(self):
         while not self.abort:
             self.counter += 1
@@ -60,7 +60,7 @@ class WorkerVoiceThread(threading.Thread):
             os.system('say Hello world')
             wx.PostEvent(self._notify_window, DataEvent(self.counter, self.id))
             time.sleep(1)
-    
+
     def stop(self):
         self.abort = True
 
@@ -86,37 +86,37 @@ class TabOne(wx.Panel):
         # Boxes
         buttonStaticBox = wx.StaticBox(self, -1, 'Functions', pos = (0,0), size = (345,95))
         quadsStaticBox = wx.StaticBox(self, -1, 'Quad Status', pos = (0,395), size = (285,210))
-        
+
         # Buttons
         self.editWPButton1 = wx.Button(self, -1, 'Edit', pos = (0,10), size = (50,20))
         self.uploadWPButton1 = wx.Button(self, -1, 'Upload', pos = (55,10), size = (65,20))
         self.downloadWPButton1 = wx.Button(self, -1, 'Download', pos = (125,10), size = (75,20))
         self.startMissionButton1 = wx.Button(self, -1, 'Start', pos = (205,10), size = (60,20))
         self.abortMissionButton1 = wx.Button(self, -1, 'Abort', pos = (270,10), size = (60,20))
-        
+
         self.editWPButton2 = wx.Button(self, -1, 'Edit', pos = (0,35), size = (50,20))
         self.uploadWPButton2 = wx.Button(self, -1, 'Upload', pos = (55,35), size = (65,20))
         self.downloadWPButton2 = wx.Button(self, -1, 'Download', pos = (125,35), size = (75,20))
         self.startMissionButton2 = wx.Button(self, -1, 'Start', pos = (205,35), size = (60,20))
         self.abortMissionButton2 = wx.Button(self, -1, 'Abort', pos = (270,35), size = (60,20))
-        
+
         self.editWPButton3 = wx.Button(self, -1, 'Edit', pos = (0,60), size = (50,20))
         self.uploadWPButton3 = wx.Button(self, -1, 'Upload', pos = (55,60), size = (65,20))
         self.downloadWPButton3 = wx.Button(self, -1, 'Download', pos = (125,60), size = (75,20))
         self.startMissionButton3 = wx.Button(self, -1, 'Start', pos = (205,60), size = (60,20))
         self.abortMissionButton3 = wx.Button(self, -1, 'Abort', pos = (270,60), size = (60,20))
         '''
-        
+
         serialPortInfo = list(serial.tools.list_ports.comports())
         serialPorts = []
         for i in range(len(serialPortInfo)):
             serialPorts.append(serialPortInfo[i][0])
         self.serialPortComboBox = wx.ComboBox(self, choices=serialPorts, size = (300,25), pos = (10,10))
         self.Bind(wx.EVT_COMBOBOX, self.OnChoosePort, self.serialPortComboBox)
-        
+
         self.connectButton = wx.Button(self, -1, 'Connect', pos = (320,5), size = (90,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.Bind(wx.EVT_BUTTON, self.OnClickSerialConnect, self.connectButton)
-        
+
         # Voice
         voiceService = wx.StaticText(self, -1, 'Voice Service', pos = (10,40), size = (120,20))
         self.voiceSwitch = wx.Button(self, -1, 'OFF', pos = (140,35), size = (60,20))
@@ -139,7 +139,9 @@ class TabOne(wx.Panel):
         navLight1.SetBackgroundColour((220,220,220))
         gcsLight1 = wx.StaticText(self, -1, 'GCS', pos = (5,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         gcsLight1.SetBackgroundColour((220,220,220))
-        
+        self.voltageLight1 = wx.StaticText(self, -1, '0.0 V', pos = (5,570), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.voltageLight1.SetBackgroundColour((220,220,220))
+
         self.quadLabel2 = wx.StaticText(self, -1, 'QUAD 2', pos = (75,410), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.quadLabel2.SetBackgroundColour((220,220,220))
         self.connectLight2 = wx.StaticText(self, -1, 'NO CON', pos = (75,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
@@ -156,7 +158,9 @@ class TabOne(wx.Panel):
         navLight2.SetBackgroundColour((220,220,220))
         gcsLight2 = wx.StaticText(self, -1, 'GCS', pos = (75,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         gcsLight2.SetBackgroundColour((220,220,220))
-        
+        self.voltageLight2 = wx.StaticText(self, -1, '0.0 V', pos = (75,570), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.voltageLight2.SetBackgroundColour((220,220,220))
+
         self.quadLabel3 = wx.StaticText(self, -1, 'QUAD 3', pos = (145,410), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.quadLabel3.SetBackgroundColour((220,220,220))
         self.connectLight3 = wx.StaticText(self, -1, 'NO CON', pos = (145,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
@@ -173,26 +177,32 @@ class TabOne(wx.Panel):
         navLight3.SetBackgroundColour((220,220,220))
         gcsLight3 = wx.StaticText(self, -1, 'GCS', pos = (145,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         gcsLight3.SetBackgroundColour((220,220,220))
-        
+        self.voltageLight3 = wx.StaticText(self, -1, '0.0 V', pos = (145,570), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.voltageLight3.SetBackgroundColour((220,220,220))
+
         # Show
         self.Show(True)
 
     def OnUpdate(self, global_states, other_states):
         # use global_states to update this page
+        # global_states will always have 3 elements, if any object is not connected, then a None will hold the place
         #print('tab one updated')
         #print(global_states)
         #print(other_states)
         try:
             if len(other_states[0]) > 0:
                 self.connectLight1.SetBackgroundColour((0,255,0))
+                self.voltageLight1.SetLabel(str(global_states[0].msp_analog['vbat']/10.0)+' V')
             else:
                 self.connectLight1.SetBackgroundColour((255,0,0))
             if len(other_states[1]) > 0:
                 self.connectLight2.SetBackgroundColour((0,255,0))
+                self.voltageLight2.SetLabel(str(global_states[1].msp_analog['vbat']/10.0)+' V')
             else:
                 self.connectLight2.SetBackgroundColour((255,0,0))
             if len(other_states[2]) > 0:
                 self.connectLight3.SetBackgroundColour((0,255,0))
+                self.voltageLight3.SetLabel(str(global_states[2].msp_analog['vbat']/10.0)+' V')
             else:
                 self.connectLight3.SetBackgroundColour((255,0,0))
         except:

@@ -82,7 +82,7 @@ class SerialCommunication(object):
         self.quadObjs = []
         self.CreateObjs()
         self.PreLoadInfo()
-    
+
     def stopSerial(self):
         self.board.stopDevice()
 
@@ -98,7 +98,7 @@ class SerialCommunication(object):
                 self.PreCheck(tempObj)
             except:
                 pass
-                
+
     def PreCheck(self, obj):
         try:
             self.board.getData(0,MultiWii.BOXIDS,[],obj)
@@ -121,11 +121,12 @@ class SerialCommunication(object):
             self.board.parseSensorStatus(obj)
             self.board.parseFlightModeFlags(obj)
             self.board.getData(0,MultiWii.ATTITUDE,[],obj)
+            self.board.getData(0,MultiWii.ANALOG,[],obj)
         except Exception, error:
             print('Failed')
             print(Exception)
             print(error)
-    
+
     def UploadWPs(self):
         pass
 
