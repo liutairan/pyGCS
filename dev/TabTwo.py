@@ -181,7 +181,28 @@ class TabTwo(wx.Panel):
             self.hwLight1.SetBackgroundColour((255,0,0))
         pass
 
+        # flight modes
         #print(global_obj.flightModes)
+        if global_obj.flightModes['ARM'] == 1:
+            self.armLight1.SetBackgroundColour((255,0,0))
+        elif global_obj.flightModes['ARM'] == 0:
+            self.armLight1.SetBackgroundColour((0,255,0))
+        else:
+            pass
+
+        if global_obj.flightModes['ANGLE'] == 1:
+            self.levelLight1.SetBackgroundColour((0,255,0))
+        elif global_obj.flightModes['ANGLE'] == 0:
+            self.levelLight1.SetBackgroundColour((255,0,0))
+        else:
+            pass
+
+        if global_obj.flightModes['ALTHOLD'] == 1:
+            self.altLight1.SetBackgroundColour((0,255,0))
+        elif global_obj.flightModes['ALTHOLD'] == 0:
+            self.altLight1.SetBackgroundColour((255,0,0))
+        else:
+            pass
 
         self.heading.SetLabel('Heading: '+str(global_obj.msp_attitude['heading']))
         self.angx.SetLabel('ANG-X: '+str(global_obj.msp_attitude['angx']))

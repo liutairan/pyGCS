@@ -193,16 +193,40 @@ class TabOne(wx.Panel):
             if len(other_states[0]) > 0:
                 self.connectLight1.SetBackgroundColour((0,255,0))
                 self.voltageLight1.SetLabel(str(global_states[0].msp_analog['vbat']/10.0)+' V')
+                if global_states[0].msp_analog['vbat'] >= 114:
+                    self.voltageLight1.SetBackgroundColour((0,255,0))
+                elif (global_states[0].msp_analog['vbat'] >= 108) and (global_states[0].msp_analog['vbat'] < 114):
+                    self.voltageLight1.SetBackgroundColour((255,200,0))
+                elif (global_states[0].msp_analog['vbat'] >= 101) and (global_states[0].msp_analog['vbat'] < 108):
+                    self.voltageLight1.SetBackgroundColour((255,0,0))
+                else:
+                    self.voltageLight1.SetBackgroundColour((255,0,0))
             else:
                 self.connectLight1.SetBackgroundColour((255,0,0))
             if len(other_states[1]) > 0:
                 self.connectLight2.SetBackgroundColour((0,255,0))
                 self.voltageLight2.SetLabel(str(global_states[1].msp_analog['vbat']/10.0)+' V')
+                if global_states[1].msp_analog['vbat'] >= 114:
+                    self.voltageLight2.SetBackgroundColour((0,255,0))
+                elif (global_states[1].msp_analog['vbat'] >= 108) and (global_states[1].msp_analog['vbat'] < 114):
+                    self.voltageLight2.SetBackgroundColour((255,200,0))
+                elif (global_states[1].msp_analog['vbat'] >= 101) and (global_states[1].msp_analog['vbat'] < 108):
+                    self.voltageLight2.SetBackgroundColour((255,0,0))
+                else:
+                    self.voltageLight2.SetBackgroundColour((255,0,0))
             else:
                 self.connectLight2.SetBackgroundColour((255,0,0))
             if len(other_states[2]) > 0:
                 self.connectLight3.SetBackgroundColour((0,255,0))
                 self.voltageLight3.SetLabel(str(global_states[2].msp_analog['vbat']/10.0)+' V')
+                if global_states[2].msp_analog['vbat'] >= 114:
+                    self.voltageLight3.SetBackgroundColour((0,255,0))
+                elif (global_states[2].msp_analog['vbat'] >= 108) and (global_states[2].msp_analog['vbat'] < 114):
+                    self.voltageLight3.SetBackgroundColour((255,200,0))
+                elif (global_states[2].msp_analog['vbat'] >= 101) and (global_states[2].msp_analog['vbat'] < 108):
+                    self.voltageLight3.SetBackgroundColour((255,0,0))
+                else:
+                    self.voltageLight3.SetBackgroundColour((255,0,0))
             else:
                 self.connectLight3.SetBackgroundColour((255,0,0))
         except:
