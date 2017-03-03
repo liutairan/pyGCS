@@ -175,9 +175,9 @@ class TabTwo(wx.Panel):
             self.pitotLight1.SetBackgroundColour((255,0,0))
         pass
 
-        if global_obj.sensor_flags['hardware'] == 1:
+        if global_obj.sensor_flags['hardware'] == 0:
             self.hwLight1.SetBackgroundColour((0,255,0))
-        elif global_obj.sensor_flags['hardware'] == 0:
+        elif global_obj.sensor_flags['hardware'] == 1:
             self.hwLight1.SetBackgroundColour((255,0,0))
         pass
 
@@ -208,6 +208,14 @@ class TabTwo(wx.Panel):
         self.angx.SetLabel('ANG-X: '+str(global_obj.msp_attitude['angx']))
         self.angy.SetLabel('ANG-Y: '+str(global_obj.msp_attitude['angy']))
         self.voltLight1.SetLabel(str(global_obj.msp_analog['vbat']/10.0)+' V')
+        if global_obj.msp_analog['vbat'] >= 114:
+            self.voltLight1.SetBackgroundColour((0,255,0))
+        elif (global_obj.msp_analog['vbat'] >= 108) and (global_obj.msp_analog['vbat'] < 114):
+            self.voltLight1.SetBackgroundColour((255,200,0))
+        elif (global_obj.msp_analog['vbat'] >= 101) and (global_obj.msp_analog['vbat'] < 108):
+            self.voltLight1.SetBackgroundColour((255,0,0))
+        else:
+            self.voltLight1.SetBackgroundColour((255,0,0))
 
     def OnListRightClick(self,event):
         tempStr = event.GetText()

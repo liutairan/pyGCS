@@ -64,41 +64,41 @@ class MultiWii:
     FC_VERSION = 3
     BOARD_INFO = 4
     BUILD_INFO = 5
-    
+
     MSP_INAV_PID = 6
     MSP_SET_INAV_PID = 7
-    
+
     MSP_NAME = 10
     MSP_SET_NAME = 11
-    
+
     NAV_POSHOLD = 12
     SET_NAV_POSHOLD = 13
-    
+
     MODE_RANGES = 34    # MSP_MODE_RANGES    out message         Returns all mode ranges
     SET_MODE_RANGE = 35 # MSP_SET_MODE_RANGE in message          Sets a single mode range
-    
+
     MSP_FEATURE = 36
     MSP_SET_FEATURE = 37
-    
+
     MSP_BOARD_ALIGNMENT = 38
     MSP_SET_BOARD_ALIGNMENT = 39
-    
+
     MSP_RX_CONFIG = 44
     MSP_SET_RX_CONFIG = 45
-    
+
     MSP_ADJUSTMENT_RANGES = 52
     MSP_SET_ADJUSTMENT_RANGE = 53
-    
+
     MSP_SONAR_ALTITUDE = 58      # SONAR cm
-    
+
     MSP_PID_CONTROLLER = 59
     MSP_SET_PID_CONTROLLER = 60
-    
+
     MSP_ARMING_CONFIG = 61         # out message         Returns auto_disarm_delay and disarm_kill_switch parameters
     MSP_SET_ARMING_CONFIG = 62     # in message          Sets auto_disarm_delay and disarm_kill_switch parameters
-    
+
     REBOOT = 68    # in message reboot settings
-    
+
     MSP_LOOP_TIME = 73 # out message         Returns FC cycle time i.e looptime parameter
     MSP_SET_LOOP_TIME = 74 # in message          Sets FC cycle time i.e looptime parameter
 
@@ -107,7 +107,7 @@ class MultiWii:
 
     MSP_RXFAIL_CONFIG = 77 # out message         Returns RXFAIL settings
     MSP_SET_RXFAIL_CONFIG = 78 # in message          Sets RXFAIL settings
-    
+
     IDENT = 100
     STATUS = 101
     RAW_IMU = 102
@@ -141,7 +141,7 @@ class MultiWii:
 
     GPSSVINFO = 164
     GPSSTATISTICS = 166
-    
+
     RADIO = 199
     SET_RAW_RC = 200
     SET_RAW_GPS = 201  # in message          fix, numsat, lat, lon, alt, speed
@@ -164,7 +164,7 @@ class MultiWii:
     MSP_SET_RC_DEADBAND = 218
     MSP_SET_RESET_CURR_PID = 219
     MSP_SET_SENSOR_ALIGNMENT = 220
-    
+
     MSP_ACC_TRIM = 240    # out message         get acc angle trim values
     MSP_SET_ACC_TRIM = 239    # in message          set acc angle trim values
     MSP_SERVO_MIX_RULES = 241    # out message         Returns servo mixer configuration
@@ -198,7 +198,7 @@ class MultiWii:
         wakeup = 3
         try:
             self.ser.open()
-            
+
             if self.PRINT:
                 print "Waking up board on "+self.ser.port+"..."
             for i in range(1,wakeup):
@@ -207,7 +207,7 @@ class MultiWii:
                     time.sleep(1)
                 else:
                     time.sleep(1)
-            
+
         except Exception, error:
             print "\n\nError opening "+self.ser.port+" port.\n"+str(error)+"\n\n"
 
@@ -529,6 +529,7 @@ class MultiWii:
     def parseSensorStatus(self, obj):
         sensorStatus = obj.msp_status_ex['activeSensors']
         temp = format(sensorStatus, '016b')
+
         obj.sensor_flags['hardware'] = int(temp[0])
         obj.sensor_flags['pitot'] = int(temp[9])
         obj.sensor_flags['sonar'] = int(temp[11])
@@ -661,4 +662,3 @@ class MultiWii:
             print('start download for: ' + ''.join("{:02x}".format(ord(c)) for c in temp_d_addr_long))
             self.downloadMissions(temp_frameid, temp_d_addr_long,temp_d_addr)    # not right here
     '''
-

@@ -177,9 +177,9 @@ class TabFour(wx.Panel):
             self.pitotLight1.SetBackgroundColour((255,0,0))
         pass
 
-        if global_obj.sensor_flags['hardware'] == 1:
+        if global_obj.sensor_flags['hardware'] == 0:
             self.hwLight1.SetBackgroundColour((0,255,0))
-        elif global_obj.sensor_flags['hardware'] == 0:
+        elif global_obj.sensor_flags['hardware'] == 1:
             self.hwLight1.SetBackgroundColour((255,0,0))
         pass
 
