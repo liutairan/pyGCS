@@ -184,8 +184,10 @@ class TabThree(wx.Panel):
         # flight modes
         #print(global_obj.flightModes)
         if global_obj.flightModes['ARM'] == 1:
+            self.armLight1.SetLabel('ARMED')
             self.armLight1.SetBackgroundColour((255,0,0))
         elif global_obj.flightModes['ARM'] == 0:
+            self.armLight1.SetLabel('DISARM')
             self.armLight1.SetBackgroundColour((0,255,0))
         else:
             pass
