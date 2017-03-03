@@ -219,6 +219,27 @@ class TabOne(wx.Panel):
                 else:
                     pass
 
+                if global_states[0].flightModes['POSHOLD'] == 1:
+                    self.posLight1.SetBackgroundColour((0,255,0))
+                elif global_states[0].flightModes['POSHOLD'] == 0:
+                    self.posLight1.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                if (global_states[0].flightModes['NAVWP'] == 1) or (global_states[0].flightModes['NAVRTH'] == 1):
+                    self.navLight1.SetBackgroundColour((0,255,0))
+                elif (global_states[0].flightModes['NAVWP'] == 0) or (global_states[0].flightModes['NAVRTH'] == 1):
+                    self.navLight1.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                if global_states[0].flightModes['GCSNAV'] == 1:
+                    self.gcsLight1.SetBackgroundColour((0,255,0))
+                elif global_states[0].flightModes['GCSNAV'] == 0:
+                    self.gcsLight1.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
                 # voltage
                 self.voltageLight1.SetLabel(str(global_states[0].msp_analog['vbat']/10.0)+' V')
                 if global_states[0].msp_analog['vbat'] >= 114:
@@ -259,6 +280,27 @@ class TabOne(wx.Panel):
                 else:
                     pass
 
+                if global_states[1].flightModes['POSHOLD'] == 1:
+                    self.posLight2.SetBackgroundColour((0,255,0))
+                elif global_states[1].flightModes['POSHOLD'] == 0:
+                    self.posLight2.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                if (global_states[1].flightModes['NAVWP'] == 1) or (global_states[1].flightModes['NAVRTH'] == 1):
+                    self.navLight2.SetBackgroundColour((0,255,0))
+                elif (global_states[1].flightModes['NAVWP'] == 0) or (global_states[1].flightModes['NAVRTH'] == 1):
+                    self.navLight2.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                if global_states[1].flightModes['GCSNAV'] == 1:
+                    self.gcsLight2.SetBackgroundColour((0,255,0))
+                elif global_states[1].flightModes['GCSNAV'] == 0:
+                    self.gcsLight2.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
                 self.voltageLight2.SetLabel(str(global_states[1].msp_analog['vbat']/10.0)+' V')
                 if global_states[1].msp_analog['vbat'] >= 114:
                     self.voltageLight2.SetBackgroundColour((0,255,0))
@@ -295,6 +337,27 @@ class TabOne(wx.Panel):
                     self.altLight3.SetBackgroundColour((0,255,0))
                 elif global_states[2].flightModes['ALTHOLD'] == 0:
                     self.altLight3.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                if global_states[2].flightModes['POSHOLD'] == 1:
+                    self.posLight3.SetBackgroundColour((0,255,0))
+                elif global_states[2].flightModes['POSHOLD'] == 0:
+                    self.posLight3.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                if (global_states[2].flightModes['NAVWP'] == 1) or (global_states[2].flightModes['NAVRTH'] == 1):
+                    self.navLight3.SetBackgroundColour((0,255,0))
+                elif (global_states[2].flightModes['NAVWP'] == 0) or (global_states[2].flightModes['NAVRTH'] == 1):
+                    self.navLight3.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                if global_states[2].flightModes['GCSNAV'] == 1:
+                    self.gcsLight3.SetBackgroundColour((0,255,0))
+                elif global_states[2].flightModes['GCSNAV'] == 0:
+                    self.gcsLight3.SetBackgroundColour((255,0,0))
                 else:
                     pass
 

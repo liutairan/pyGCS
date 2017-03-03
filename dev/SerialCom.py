@@ -120,7 +120,7 @@ class SerialCommunication(object):
             self.board.getData(0,MultiWii.MSP_STATUS_EX,[],obj)
             self.board.parseSensorStatus(obj)
             self.board.parseFlightModeFlags(obj)
-            self.board.getData(0,MultiWii.ATTITUDE,[],obj)
+            #self.board.getData(0,MultiWii.ATTITUDE,[],obj)
             self.board.getData(0,MultiWii.ANALOG,[],obj)
         except Exception, error:
             print('Failed')

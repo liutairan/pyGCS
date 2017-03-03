@@ -208,6 +208,27 @@ class TabFour(wx.Panel):
         else:
             pass
 
+        if global_obj.flightModes['POSHOLD'] == 1:
+            self.posLight1.SetBackgroundColour((0,255,0))
+        elif global_obj.flightModes['POSHOLD'] == 0:
+            self.posLight1.SetBackgroundColour((255,0,0))
+        else:
+            pass
+
+        if (global_obj.flightModes['NAVWP'] == 1) or (global_obj.flightModes['NAVRTH'] == 1):
+            self.navLight1.SetBackgroundColour((0,255,0))
+        elif (global_obj.flightModes['NAVWP'] == 0) or (global_obj.flightModes['NAVRTH'] == 1):
+            self.navLight1.SetBackgroundColour((255,0,0))
+        else:
+            pass
+
+        if global_obj.flightModes['GCSNAV'] == 1:
+            self.gcsLight1.SetBackgroundColour((0,255,0))
+        elif global_obj.flightModes['GCSNAV'] == 0:
+            self.gcsLight1.SetBackgroundColour((255,0,0))
+        else:
+            pass
+
         self.heading.SetLabel('Heading: '+str(global_obj.msp_attitude['heading']))
         self.angx.SetLabel('ANG-X: '+str(global_obj.msp_attitude['angx']))
         self.angy.SetLabel('ANG-Y: '+str(global_obj.msp_attitude['angy']))
