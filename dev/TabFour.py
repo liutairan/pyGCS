@@ -109,7 +109,7 @@ class TabFour(wx.Panel):
         self.navLight1.SetBackgroundColour((220,220,220))
         self.gcsLight1 = wx.StaticText(self, -1, 'GCS', pos = (405,183), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.gcsLight1.SetBackgroundColour((220,220,220))
-        self.voltLight1 = wx.StaticText(self, -1, '0.0V', pos = (405,203), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.voltLight1 = wx.StaticText(self, -1, '0.0 V', pos = (405,203), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.voltLight1.SetBackgroundColour((220,220,220))
 
         # Buttons
@@ -177,18 +177,49 @@ class TabFour(wx.Panel):
             self.pitotLight1.SetBackgroundColour((255,0,0))
         pass
 
-        if global_obj.sensor_flags['hardware'] == 1:
+        if global_obj.sensor_flags['hardware'] == 0:
             self.hwLight1.SetBackgroundColour((0,255,0))
-        elif global_obj.sensor_flags['hardware'] == 0:
+        elif global_obj.sensor_flags['hardware'] == 1:
             self.hwLight1.SetBackgroundColour((255,0,0))
         pass
 
+        # flight modes
         #print(global_obj.flightModes)
+        if global_obj.flightModes['ARM'] == 1:
+            self.armLight1.SetLabel('ARMED')
+            self.armLight1.SetBackgroundColour((255,0,0))
+        elif global_obj.flightModes['ARM'] == 0:
+            self.armLight1.SetLabel('DISARM')
+            self.armLight1.SetBackgroundColour((0,255,0))
+        else:
+            pass
+
+        if global_obj.flightModes['ANGLE'] == 1:
+            self.levelLight1.SetBackgroundColour((0,255,0))
+        elif global_obj.flightModes['ANGLE'] == 0:
+            self.levelLight1.SetBackgroundColour((255,0,0))
+        else:
+            pass
+
+        if global_obj.flightModes['ALTHOLD'] == 1:
+            self.altLight1.SetBackgroundColour((0,255,0))
+        elif global_obj.flightModes['ALTHOLD'] == 0:
+            self.altLight1.SetBackgroundColour((255,0,0))
+        else:
+            pass
 
         self.heading.SetLabel('Heading: '+str(global_obj.msp_attitude['heading']))
         self.angx.SetLabel('ANG-X: '+str(global_obj.msp_attitude['angx']))
         self.angy.SetLabel('ANG-Y: '+str(global_obj.msp_attitude['angy']))
         self.voltLight1.SetLabel(str(global_obj.msp_analog['vbat']/10.0)+' V')
+        if global_obj.msp_analog['vbat'] >= 114:
+            self.voltLight1.SetBackgroundColour((0,255,0))
+        elif (global_obj.msp_analog['vbat'] >= 108) and (global_obj.msp_analog['vbat'] < 114):
+            self.voltLight1.SetBackgroundColour((255,200,0))
+        elif (global_obj.msp_analog['vbat'] >= 101) and (global_obj.msp_analog['vbat'] < 108):
+            self.voltLight1.SetBackgroundColour((255,0,0))
+        else:
+            self.voltLight1.SetBackgroundColour((255,0,0))
 
     def OnListRightClick(self,event):
         tempStr = event.GetText()

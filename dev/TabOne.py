@@ -127,18 +127,18 @@ class TabOne(wx.Panel):
         self.quadLabel1.SetBackgroundColour((220,220,220))
         self.connectLight1 = wx.StaticText(self, -1, 'NO CON', pos = (5,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.connectLight1.SetBackgroundColour((255,0,0))
-        armLight1 = wx.StaticText(self, -1, 'DISARM', pos = (5,450), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        armLight1.SetBackgroundColour((220,220,220))
-        levelLight1 = wx.StaticText(self, -1, 'LEVEL', pos = (5,470), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        levelLight1.SetBackgroundColour((220,220,220))
-        altLight1 = wx.StaticText(self, -1, 'ALT', pos = (5,490), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        altLight1.SetBackgroundColour((220,220,220))
-        posLight1 = wx.StaticText(self, -1, 'POS', pos = (5,510), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        posLight1.SetBackgroundColour((220,220,220))
-        navLight1 = wx.StaticText(self, -1, 'NAV', pos = (5,530), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        navLight1.SetBackgroundColour((220,220,220))
-        gcsLight1 = wx.StaticText(self, -1, 'GCS', pos = (5,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        gcsLight1.SetBackgroundColour((220,220,220))
+        self.armLight1 = wx.StaticText(self, -1, 'DISARM', pos = (5,450), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.armLight1.SetBackgroundColour((220,220,220))
+        self.levelLight1 = wx.StaticText(self, -1, 'LEVEL', pos = (5,470), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.levelLight1.SetBackgroundColour((220,220,220))
+        self.altLight1 = wx.StaticText(self, -1, 'ALT', pos = (5,490), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.altLight1.SetBackgroundColour((220,220,220))
+        self.posLight1 = wx.StaticText(self, -1, 'POS', pos = (5,510), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.posLight1.SetBackgroundColour((220,220,220))
+        self.navLight1 = wx.StaticText(self, -1, 'NAV', pos = (5,530), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.navLight1.SetBackgroundColour((220,220,220))
+        self.gcsLight1 = wx.StaticText(self, -1, 'GCS', pos = (5,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.gcsLight1.SetBackgroundColour((220,220,220))
         self.voltageLight1 = wx.StaticText(self, -1, '0.0 V', pos = (5,570), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.voltageLight1.SetBackgroundColour((220,220,220))
 
@@ -146,18 +146,18 @@ class TabOne(wx.Panel):
         self.quadLabel2.SetBackgroundColour((220,220,220))
         self.connectLight2 = wx.StaticText(self, -1, 'NO CON', pos = (75,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.connectLight2.SetBackgroundColour((255,0,0))
-        armLight2 = wx.StaticText(self, -1, 'DISARM', pos = (75,450), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        armLight2.SetBackgroundColour((220,220,220))
-        levelLight2 = wx.StaticText(self, -1, 'LEVEL', pos = (75,470), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        levelLight2.SetBackgroundColour((220,220,220))
-        altLight2 = wx.StaticText(self, -1, 'ALT', pos = (75,490), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        altLight2.SetBackgroundColour((220,220,220))
-        posLight2 = wx.StaticText(self, -1, 'POS', pos = (75,510), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        posLight2.SetBackgroundColour((220,220,220))
-        navLight2 = wx.StaticText(self, -1, 'NAV', pos = (75,530), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        navLight2.SetBackgroundColour((220,220,220))
-        gcsLight2 = wx.StaticText(self, -1, 'GCS', pos = (75,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        gcsLight2.SetBackgroundColour((220,220,220))
+        self.armLight2 = wx.StaticText(self, -1, 'DISARM', pos = (75,450), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.armLight2.SetBackgroundColour((220,220,220))
+        self.levelLight2 = wx.StaticText(self, -1, 'LEVEL', pos = (75,470), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.levelLight2.SetBackgroundColour((220,220,220))
+        self.altLight2 = wx.StaticText(self, -1, 'ALT', pos = (75,490), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.altLight2.SetBackgroundColour((220,220,220))
+        self.posLight2 = wx.StaticText(self, -1, 'POS', pos = (75,510), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.posLight2.SetBackgroundColour((220,220,220))
+        self.navLight2 = wx.StaticText(self, -1, 'NAV', pos = (75,530), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.navLight2.SetBackgroundColour((220,220,220))
+        self.gcsLight2 = wx.StaticText(self, -1, 'GCS', pos = (75,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.gcsLight2.SetBackgroundColour((220,220,220))
         self.voltageLight2 = wx.StaticText(self, -1, '0.0 V', pos = (75,570), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.voltageLight2.SetBackgroundColour((220,220,220))
 
@@ -165,18 +165,18 @@ class TabOne(wx.Panel):
         self.quadLabel3.SetBackgroundColour((220,220,220))
         self.connectLight3 = wx.StaticText(self, -1, 'NO CON', pos = (145,430), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.connectLight3.SetBackgroundColour((255,0,0))
-        armLight3 = wx.StaticText(self, -1, 'DISARM', pos = (145,450), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        armLight3.SetBackgroundColour((220,220,220))
-        levelLight3 = wx.StaticText(self, -1, 'LEVEL', pos = (145,470), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        levelLight3.SetBackgroundColour((220,220,220))
-        altLight3 = wx.StaticText(self, -1, 'ALT', pos = (145,490), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        altLight3.SetBackgroundColour((220,220,220))
-        posLight3 = wx.StaticText(self, -1, 'POS', pos = (145,510), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        posLight3.SetBackgroundColour((220,220,220))
-        navLight3 = wx.StaticText(self, -1, 'NAV', pos = (145,530), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        navLight3.SetBackgroundColour((220,220,220))
-        gcsLight3 = wx.StaticText(self, -1, 'GCS', pos = (145,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
-        gcsLight3.SetBackgroundColour((220,220,220))
+        self.armLight3 = wx.StaticText(self, -1, 'DISARM', pos = (145,450), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.armLight3.SetBackgroundColour((220,220,220))
+        self.levelLight3 = wx.StaticText(self, -1, 'LEVEL', pos = (145,470), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.levelLight3.SetBackgroundColour((220,220,220))
+        self.altLight3 = wx.StaticText(self, -1, 'ALT', pos = (145,490), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.altLight3.SetBackgroundColour((220,220,220))
+        self.posLight3 = wx.StaticText(self, -1, 'POS', pos = (145,510), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.posLight3.SetBackgroundColour((220,220,220))
+        self.navLight3 = wx.StaticText(self, -1, 'NAV', pos = (145,530), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.navLight3.SetBackgroundColour((220,220,220))
+        self.gcsLight3 = wx.StaticText(self, -1, 'GCS', pos = (145,550), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
+        self.gcsLight3.SetBackgroundColour((220,220,220))
         self.voltageLight3 = wx.StaticText(self, -1, '0.0 V', pos = (145,570), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.voltageLight3.SetBackgroundColour((220,220,220))
 
@@ -191,18 +191,122 @@ class TabOne(wx.Panel):
         #print(other_states)
         try:
             if len(other_states[0]) > 0:
+                self.connectLight1.SetLabel('CONN')
                 self.connectLight1.SetBackgroundColour((0,255,0))
+
+                # flight modes
+                #print(global_obj.flightModes)
+                if global_states[0].flightModes['ARM'] == 1:
+                    self.armLight1.SetLabel('ARMED')
+                    self.armLight1.SetBackgroundColour((255,0,0))
+                elif global_states[0].flightModes['ARM'] == 0:
+                    self.armLight1.SetLabel('DISARMED')
+                    self.armLight1.SetBackgroundColour((0,255,0))
+                else:
+                    pass
+
+                if global_states[0].flightModes['ANGLE'] == 1:
+                    self.levelLight1.SetBackgroundColour((0,255,0))
+                elif global_states[0].flightModes['ANGLE'] == 0:
+                    self.levelLight1.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                if global_states[0].flightModes['ALTHOLD'] == 1:
+                    self.altLight1.SetBackgroundColour((0,255,0))
+                elif global_states[0].flightModes['ALTHOLD'] == 0:
+                    self.altLight1.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                # voltage
                 self.voltageLight1.SetLabel(str(global_states[0].msp_analog['vbat']/10.0)+' V')
+                if global_states[0].msp_analog['vbat'] >= 114:
+                    self.voltageLight1.SetBackgroundColour((0,255,0))
+                elif (global_states[0].msp_analog['vbat'] >= 108) and (global_states[0].msp_analog['vbat'] < 114):
+                    self.voltageLight1.SetBackgroundColour((255,200,0))
+                elif (global_states[0].msp_analog['vbat'] >= 101) and (global_states[0].msp_analog['vbat'] < 108):
+                    self.voltageLight1.SetBackgroundColour((255,0,0))
+                else:
+                    self.voltageLight1.SetBackgroundColour((255,0,0))
             else:
                 self.connectLight1.SetBackgroundColour((255,0,0))
+
             if len(other_states[1]) > 0:
+                self.connectLight2.SetLabel('CONN')
                 self.connectLight2.SetBackgroundColour((0,255,0))
+
+                if global_states[1].flightModes['ARM'] == 1:
+                    self.armLight2.SetLabel('ARMED')
+                    self.armLight2.SetBackgroundColour((255,0,0))
+                elif global_states[1].flightModes['ARM'] == 0:
+                    self.armLight2.SetLabel('DISARM')
+                    self.armLight2.SetBackgroundColour((0,255,0))
+                else:
+                    pass
+
+                if global_states[1].flightModes['ANGLE'] == 1:
+                    self.levelLight2.SetBackgroundColour((0,255,0))
+                elif global_states[1].flightModes['ANGLE'] == 0:
+                    self.levelLight2.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                if global_states[1].flightModes['ALTHOLD'] == 1:
+                    self.altLight2.SetBackgroundColour((0,255,0))
+                elif global_states[1].flightModes['ALTHOLD'] == 0:
+                    self.altLight2.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
                 self.voltageLight2.SetLabel(str(global_states[1].msp_analog['vbat']/10.0)+' V')
+                if global_states[1].msp_analog['vbat'] >= 114:
+                    self.voltageLight2.SetBackgroundColour((0,255,0))
+                elif (global_states[1].msp_analog['vbat'] >= 108) and (global_states[1].msp_analog['vbat'] < 114):
+                    self.voltageLight2.SetBackgroundColour((255,200,0))
+                elif (global_states[1].msp_analog['vbat'] >= 101) and (global_states[1].msp_analog['vbat'] < 108):
+                    self.voltageLight2.SetBackgroundColour((255,0,0))
+                else:
+                    self.voltageLight2.SetBackgroundColour((255,0,0))
             else:
                 self.connectLight2.SetBackgroundColour((255,0,0))
+
             if len(other_states[2]) > 0:
+                self.connectLight3.SetLabel('CONN')
                 self.connectLight3.SetBackgroundColour((0,255,0))
+
+                if global_states[2].flightModes['ARM'] == 1:
+                    self.armLight3.SetLabel('ARMED')
+                    self.armLight3.SetBackgroundColour((255,0,0))
+                elif global_states[2].flightModes['ARM'] == 0:
+                    self.armLight3.SetLabel('DISARM')
+                    self.armLight3.SetBackgroundColour((0,255,0))
+                else:
+                    pass
+
+                if global_states[2].flightModes['ANGLE'] == 1:
+                    self.levelLight3.SetBackgroundColour((0,255,0))
+                elif global_states[2].flightModes['ANGLE'] == 0:
+                    self.levelLight3.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
+                if global_states[2].flightModes['ALTHOLD'] == 1:
+                    self.altLight3.SetBackgroundColour((0,255,0))
+                elif global_states[2].flightModes['ALTHOLD'] == 0:
+                    self.altLight3.SetBackgroundColour((255,0,0))
+                else:
+                    pass
+
                 self.voltageLight3.SetLabel(str(global_states[2].msp_analog['vbat']/10.0)+' V')
+                if global_states[2].msp_analog['vbat'] >= 114:
+                    self.voltageLight3.SetBackgroundColour((0,255,0))
+                elif (global_states[2].msp_analog['vbat'] >= 108) and (global_states[2].msp_analog['vbat'] < 114):
+                    self.voltageLight3.SetBackgroundColour((255,200,0))
+                elif (global_states[2].msp_analog['vbat'] >= 101) and (global_states[2].msp_analog['vbat'] < 108):
+                    self.voltageLight3.SetBackgroundColour((255,0,0))
+                else:
+                    self.voltageLight3.SetBackgroundColour((255,0,0))
             else:
                 self.connectLight3.SetBackgroundColour((255,0,0))
         except:
