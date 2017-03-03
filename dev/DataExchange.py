@@ -62,7 +62,7 @@ class WorkerProcess(multiprocessing.Process):
 
     def run(self):
         while not self.exit.is_set():
-            self.sch.RegularLoadInfo()
+            self.sch.RegularLoadInfoLoose()
             self.result_queue.put(self.sch.quadObjs)
             time.sleep(0.1)
         print "Exited"

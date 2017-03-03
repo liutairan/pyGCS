@@ -127,6 +127,15 @@ class SerialCommunication(object):
             print(Exception)
             print(error)
 
+    def RegularLoadInfoLoose(self):
+        for i in range(len(self.quadObjs)):
+            tempObj = self.quadObjs[i]
+            try:
+                self.board.getDataLoose(0, MultiWii.MSP_STATUS_EX, [], tempObj, self.quadObjs)
+                self.board.getDataLoose(0, MultiWii.ANALOG, [], tempObj, self.quadObjs)
+            except:
+                pass
+
     def UploadWPs(self):
         pass
 
