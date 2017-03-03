@@ -694,6 +694,7 @@ class MultiWii:
                 rec_obj.msp_attitude['angx'] = float(temp[0]/10.0)
                 rec_obj.msp_attitude['angy'] = float(temp[1]/10.0)
                 rec_obj.msp_attitude['heading'] = float(temp[2])
+                #print(rec_obj.msp_attitude)
                 #return self.attitude
             elif cmd == MultiWii.RC:           # checked
                 temp = struct.unpack('<'+'h'*(datalength/2)+'B',data)
@@ -808,6 +809,7 @@ class MultiWii:
                 rec_obj.msp_analog['powermetersum'] = temp[1]
                 rec_obj.msp_analog['rssi'] = temp[2]
                 rec_obj.msp_analog['amps'] = temp[3]
+                #print(rec_obj.msp_analog)
             elif cmd == MultiWii.MODE_RANGES:
                 # not working,
                 # because the data feedback should be '3c2B'+'80B'+'B',
@@ -870,6 +872,7 @@ class MultiWii:
             else:
                 return "No return error!"
         except Exception, error:
+            print('Get Data Error')
             print(Exception)
             print error
             pass
