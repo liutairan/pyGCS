@@ -94,10 +94,17 @@ class SerialCommunication(object):
     def PreLoadInfo(self):
         for i in range(len(self.quadObjs)):
             tempObj = self.quadObjs[i]
-            try:
-                self.PreCheck(tempObj)
-            except:
-                pass
+            #print('pre check')
+            while True:
+                try:
+                    with time_limit(0.5):
+                        self.PreCheck(tempObj)
+                        print('Warmed up')
+                        break
+                except:
+                    self.stopSerial()
+                    print('Time out warm up')
+                    pass
 
     def PreCheck(self, obj):
         try:

@@ -220,6 +220,7 @@ class MainFrame(wx.Frame):
 
     def OnPageChanged(self, event):
         self.currentTab = event.GetSelection()
+        self.dataExchangeHandle.serialMode = self.currentTab
         event.Skip()
 
     def OnPageChanging(self, event):

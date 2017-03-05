@@ -227,6 +227,7 @@ class MultiWii:
             start = time.time()
             totaldata = self.requestData(data_length, send_code, send_data, obj)
             datalength = struct.unpack('<B', totaldata[3])[0]
+            print(datalength)
             cmd = struct.unpack('<B', totaldata[4])[0]
             data = totaldata[5:]
 
@@ -455,6 +456,7 @@ class MultiWii:
         return tempdata
 
     def preCheckReadData(self, rec_data_pack, send_code, send_data, obj):
+        #print(rec_data_pack)
         if len(rec_data_pack[2]) >= 5:
             header = rec_data_pack[2][0:3]
             if header == '$M>':
