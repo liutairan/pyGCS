@@ -40,6 +40,8 @@ import multiprocessing
 from multiprocessing import Process
 from multiprocessing import Queue
 import Queue
+import signal
+from contextlib import contextmanager
 
 __author__ = "Tairan Liu"
 __copyright__ = "Copyright 2017, Tairan Liu"
@@ -50,22 +52,64 @@ __maintainer__ = "Tairan Liu"
 __email__ = "liutairan2012@gmail.com"
 __status__ = "Development"
 
+class TimeoutException(Exception): pass
+
+@contextmanager
+def time_limit(seconds):
+    def signal_handler(signum, frame):
+        raise TimeoutException, "Timed out!"
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.setitimer(signal.ITIMER_REAL, seconds)
+    try:
+        yield
+    finally:
+        signal.alarm(0)
+
 class WorkerProcess(multiprocessing.Process):
 
-    def __init__(self, port, addresslist, result_queue):
+    def __init__(self, port, addresslist, task_queue, result_queue):
         multiprocessing.Process.__init__(self)
         self.exit = multiprocessing.Event()
         self.serialPort = port
         self.addressList = addresslist
         self.sch = SerialCommunication(self.serialPort, self.addressList)
+        self.task_queue = task_queue
         self.result_queue = result_queue
+        self.modeSelection = 0
 
     def run(self):
         while not self.exit.is_set():
-            self.sch.RegularLoadInfo()
-            self.result_queue.put(self.sch.quadObjs)
-            time.sleep(0.1)
+            try:
+                with time_limit(0.001):
+                    next_task = self.task_queue.get()
+            except:
+                next_task = 0
+
+            if next_task == 0:
+                self.modeSelection = 0
+                print(self.modeSelection)
+                self.sch.RegularLoadInfoLoose()
+                self.result_queue.put(self.sch.quadObjs)
+                time.sleep(0.1)
+            elif next_task == 1:
+                self.modeSelection = 1
+                print(self.modeSelection)
+                self.modeSelection = 0
+            elif next_task == 2:
+                self.modeSelection = 2
+                print(self.modeSelection)
+                self.modeSelection = 0
+            elif next_task == 3:
+                self.modeSelection = 3
+                print(self.modeSelection)
+                self.modeSelection = 0
+            else:
+                pass
         print "Exited"
+
+    def mode(self, value):
+        self.modeSelection = value
+        #print(self.modeSelection)
 
     def shutdown(self):
         print("Shutdown initiated")
@@ -86,8 +130,10 @@ class DataExchange(object):
         self._serialOn = False
         self.workerSerial = None
         self._rawData = None
+        self.task = multiprocessing.Queue()
         self.result = multiprocessing.Queue()
         self.timer = None
+        self._serialMode = 0
 
     def bind_to(self, callback):
         self._observers.append(callback)
@@ -122,7 +168,7 @@ class DataExchange(object):
     def set_serialOn(self, value):
         self._serialOn = value
         if self.serialOn == True:
-            self.workerSerial = WorkerProcess(self.serialPort, self.addressList, self.result)
+            self.workerSerial = WorkerProcess(self.serialPort, self.addressList, self.task, self.result)
             self.workerSerial.daemon = True
             self.workerSerial.start()
             self.timer = Timer(0.1, self.OnUpdate, ())
@@ -137,6 +183,18 @@ class DataExchange(object):
             pass
 
     serialOn = property(get_serialOn, set_serialOn)
+
+    def get_serialMode(self):
+        return self._serialMode
+
+    def set_serialMode(self, value):
+        self._serialMode = value
+        if self.serialOn == True:
+            #pass
+            self.task.put(self._serialMode)
+            #self.workerSerial.mode(self.serialMode)
+
+    serialMode = property(get_serialMode, set_serialMode)
 
     def get_rawData(self):
         return self._rawData

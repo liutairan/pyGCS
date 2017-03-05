@@ -94,10 +94,17 @@ class SerialCommunication(object):
     def PreLoadInfo(self):
         for i in range(len(self.quadObjs)):
             tempObj = self.quadObjs[i]
-            try:
-                self.PreCheck(tempObj)
-            except:
-                pass
+            #print('pre check')
+            while True:
+                try:
+                    with time_limit(0.5):
+                        self.PreCheck(tempObj)
+                        print('Warmed up')
+                        break
+                except:
+                    self.stopSerial()
+                    print('Time out warm up')
+                    pass
 
     def PreCheck(self, obj):
         try:
@@ -120,12 +127,23 @@ class SerialCommunication(object):
             self.board.getData(0,MultiWii.MSP_STATUS_EX,[],obj)
             self.board.parseSensorStatus(obj)
             self.board.parseFlightModeFlags(obj)
-            self.board.getData(0,MultiWii.ATTITUDE,[],obj)
+            #self.board.getData(0,MultiWii.ATTITUDE,[],obj)
             self.board.getData(0,MultiWii.ANALOG,[],obj)
         except Exception, error:
             print('Failed')
             print(Exception)
             print(error)
+
+    def RegularLoadInfoLoose(self):
+        for i in range(len(self.quadObjs)):
+            tempObj = self.quadObjs[i]
+            try:
+                self.board.getDataLoose(0, MultiWii.MSP_STATUS_EX, [], tempObj, self.quadObjs)
+                self.board.getDataLoose(0, MultiWii.ANALOG, [], tempObj, self.quadObjs)
+                self.board.getDataLoose(0, MultiWii.ATTITUDE,[],tempObj, self.quadObjs)
+            except:
+                print('Regular load error')
+                pass
 
     def UploadWPs(self):
         pass

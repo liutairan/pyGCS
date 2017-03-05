@@ -219,7 +219,6 @@ class MultiWii:
         self.zb.halt()
         self.ser.close()
 
-    """Function to receive a data packet from the board"""
     def getData(self, data_length, send_code, send_data, obj): #
         frameid = obj.frame_id
         d_addr_long = obj.address_long
@@ -228,6 +227,7 @@ class MultiWii:
             start = time.time()
             totaldata = self.requestData(data_length, send_code, send_data, obj)
             datalength = struct.unpack('<B', totaldata[3])[0]
+            print(datalength)
             cmd = struct.unpack('<B', totaldata[4])[0]
             data = totaldata[5:]
 
@@ -456,6 +456,7 @@ class MultiWii:
         return tempdata
 
     def preCheckReadData(self, rec_data_pack, send_code, send_data, obj):
+        #print(rec_data_pack)
         if len(rec_data_pack[2]) >= 5:
             header = rec_data_pack[2][0:3]
             if header == '$M>':
@@ -662,3 +663,258 @@ class MultiWii:
             print('start download for: ' + ''.join("{:02x}".format(ord(c)) for c in temp_d_addr_long))
             self.downloadMissions(temp_frameid, temp_d_addr_long,temp_d_addr)    # not right here
     '''
+
+
+    def getDataLoose(self, data_length, send_code, send_data, send_obj, allobjs): #
+        frameid = send_obj.frame_id
+        d_addr_long = send_obj.address_long
+        d_addr = send_obj.address_short
+        d_addr_list = []
+        for i in range(len(allobjs)):
+            d_addr_list.append(allobjs[i].address_long)
+
+        try:
+            start = time.time()
+            rec_totaldata = self.requestDataLoose(data_length, send_code, send_data, send_obj, d_addr_list)
+            rec_addr_long = rec_totaldata[0]
+            objInd = d_addr_list.index(rec_addr_long)
+            rec_obj = allobjs[objInd]
+
+            totaldata = rec_totaldata[2]
+            datalength = struct.unpack('<B', totaldata[3])[0]
+            cmd = struct.unpack('<B', totaldata[4])[0]
+            data = totaldata[5:]
+
+            elapsed = time.time() - start
+            if cmd == MultiWii.ATTITUDE:
+                temp = struct.unpack('<'+'h'*(datalength/2)+'B',data)
+                #obj.attitude['angx']=float(temp[0]/10.0)
+                #obj.attitude['angy']=float(temp[1]/10.0)
+                #obj.attitude['heading']=float(temp[2])
+                #self.attitude['elapsed']=round(elapsed,3)
+                #self.attitude['timestamp']="%0.2f" % (time.time(),)
+                rec_obj.msp_attitude['angx'] = float(temp[0]/10.0)
+                rec_obj.msp_attitude['angy'] = float(temp[1]/10.0)
+                rec_obj.msp_attitude['heading'] = float(temp[2])
+                #print(rec_obj.msp_attitude)
+                #return self.attitude
+            elif cmd == MultiWii.RC:           # checked
+                temp = struct.unpack('<'+'h'*(datalength/2)+'B',data)
+                rec_obj.rcChannels['roll']=temp[0]
+                rec_obj.rcChannels['pitch']=temp[1]
+                rec_obj.rcChannels['yaw']=temp[2]
+                rec_obj.rcChannels['throttle']=temp[3]
+                rec_obj.rcChannels['aux1'] = temp[4]
+                rec_obj.rcChannels['aux2'] = temp[5]
+                rec_obj.rcChannels['aux3'] = temp[6]
+                rec_obj.rcChannels['aux4'] = temp[7]
+                # to do aux
+                rec_obj.rcChannels['elapsed']=round(elapsed,3)
+                rec_obj.rcChannels['timestamp']="%0.2f" % (time.time(),)
+                #return self.rcChannels
+            elif cmd == MultiWii.RAW_IMU:       # checked
+                temp = struct.unpack('<'+'h'*(datalength/2)+'B',data)
+                rec_obj.rawIMU['ax']=float(temp[0])
+                rec_obj.rawIMU['ay']=float(temp[1])
+                rec_obj.rawIMU['az']=float(temp[2])
+                rec_obj.rawIMU['gx']=float(temp[3])
+                rec_obj.rawIMU['gy']=float(temp[4])
+                rec_obj.rawIMU['gz']=float(temp[5])
+                rec_obj.rawIMU['mx']=float(temp[6])
+                rec_obj.rawIMU['my']=float(temp[7])
+                rec_obj.rawIMU['mz']=float(temp[8])
+                rec_obj.rawIMU['elapsed']=round(elapsed,3)
+                rec_obj.rawIMU['timestamp']="%0.2f" % (time.time(),)
+                #return self.rawIMU
+            elif cmd == MultiWii.MOTOR:
+                temp = struct.unpack('<'+'h'*(datalength/2)+'B',data)
+                rec_obj.motor['m1']=float(temp[0])
+                rec_obj.motor['m2']=float(temp[1])
+                rec_obj.motor['m3']=float(temp[2])
+                rec_obj.motor['m4']=float(temp[3])
+                rec_obj.motor['elapsed']="%0.3f" % (elapsed,)
+                rec_obj.motor['timestamp']="%0.2f" % (time.time(),)
+                return self.motor
+            elif cmd == MultiWii.STATUS:
+                temp = struct.unpack('<3HI2B',data)
+                rec_obj.msp_status['cycleTime'] = temp[0]
+                rec_obj.msp_status['i2cError'] = temp[1]
+                rec_obj.msp_status['activeSensors'] = temp[2]
+                rec_obj.msp_status['flightModeFlags'] = temp[3]
+                rec_obj.msp_status['profile'] = temp[4]
+            elif cmd == MultiWii.MSP_STATUS_EX:       # checked
+                temp = struct.unpack('<3HIB2HB',data)
+                rec_obj.msp_status_ex['cycletime'] = temp[0]
+                rec_obj.msp_status_ex['i2cError'] = temp[1]
+                rec_obj.msp_status_ex['activeSensors'] = temp[2]
+                rec_obj.msp_status_ex['flightModeFlags'] = temp[3]
+                rec_obj.msp_status_ex['profile'] = temp[4]
+                rec_obj.msp_status_ex['averageSystemLoadPercent'] = temp[5]
+                rec_obj.msp_status_ex['armingFlags'] = temp[6]
+                self.parseSensorStatus(rec_obj)
+                self.parseFlightModeFlags(rec_obj)
+                #print(rec_obj.msp_status_ex)
+
+            elif cmd == MultiWii.MSP_SENSOR_STATUS:
+                temp = struct.unpack('<9B',data)
+                # to do
+
+            elif cmd == MultiWii.MSP_LOOP_TIME:
+                temp = struct.unpack('<HB',data)
+                rec_obj.msp_loop_time['looptime'] = temp[0]
+
+            elif cmd == MultiWii.API_VERSION:
+                temp = struct.unpack('<4B',data)
+                rec_obj.msp_api_version['msp_protocol_version'] = temp[0]
+                rec_obj.msp_api_version['api_version_major'] = temp[1]
+                rec_obj.msp_api_version['api_version_minor'] = temp[2]
+            elif cmd == MultiWii.BOARD_INFO:
+                temp = struct.unpack('<'+'b'*(datalength-3) + 'HB',data)
+                rec_obj.msp_board_info['board_identifier'] = temp[0]
+                rec_obj.msp_board_info['hardware_revision'] = temp[1]
+
+            elif cmd == MultiWii.IDENT:
+                temp = struct.unpack('<3BIB',data)
+                rec_obj.msp_ident['version'] = temp[0]
+                rec_obj.msp_ident['multitype'] = temp[1]
+                rec_obj.msp_ident['msp_version'] = temp[2]
+                rec_obj.msp_ident['capability'] = temp[3]
+
+            elif cmd == MultiWii.MISC:
+                temp = struct.unpack('<6HIH4B',data) # not right
+                rec_obj.msp_misc['intPowerTrigger1'] = temp[0]
+                rec_obj.msp_misc['maxthrottle'] = temp[2]
+                rec_obj.msp_misc['mincommand'] = temp[3]
+                # to do
+            elif cmd == MultiWii.ALTITUDE:         # may not working
+                temp = struct.unpack('<IHB',data)
+                rec_obj.msp_altitude['estalt'] = temp[0]
+                rec_obj.msp_altitude['vario'] = temp[1]
+
+            elif cmd == MultiWii.RADIO:
+                temp = struct.unpack('<2H6B',data)
+                rec_obj.msp_radio['rxerrors'] = temp[0]
+                rec_obj.msp_radio['fixed_errors'] = temp[1]
+                rec_obj.msp_radio['localrssi'] = temp[2]
+                rec_obj.msp_radio['remrssi'] = temp[3]
+                rec_obj.msp_radio['txbuf'] = temp[4]
+                rec_obj.msp_radio['noise'] = temp[5]
+                rec_obj.msp_radio['remnoise'] = temp[6]
+
+            elif cmd == MultiWii.MSP_SONAR_ALTITUDE: # checked
+                temp = struct.unpack('<iB',data)
+                rec_obj.msp_sonar_altitude['sonar_altitude'] = temp[0]
+
+            elif cmd == MultiWii.ANALOG:          # checked, vbat:109
+                temp = struct.unpack('<B3HB',data)
+                rec_obj.msp_analog['vbat'] = temp[0]
+                rec_obj.msp_analog['powermetersum'] = temp[1]
+                rec_obj.msp_analog['rssi'] = temp[2]
+                rec_obj.msp_analog['amps'] = temp[3]
+                #print(rec_obj.msp_analog)
+            elif cmd == MultiWii.MODE_RANGES:
+                # not working,
+                # because the data feedback should be '3c2B'+'80B'+'B',
+                # longer than the permitted length of XBEE S2 AT ROUTER (84 Bytes).
+                # So the data is separated to 2 frames.
+                # But there are only two bytes (one byte for real range data, one byte for checksum) in the second frame,
+                # so it does not worth to wait for another frame.
+                #print(datalength)
+                #print(len(data))
+                temp = struct.unpack('<'+'B'*(len(data)),data)
+                print(temp)
+                # to do
+            elif cmd == MultiWii.MSP_ADJUSTMENT_RANGES:
+                pass
+                # to do
+            elif cmd == MultiWii.BOXIDS: # checked
+                #print('right')
+                #print(datalength)
+                #print(len(data))
+                temp = struct.unpack('<'+'B'*datalength + 'B',data)
+                rec_obj.activeBoxes = list(temp)
+                #print(temp)
+                # to do
+            elif cmd == MultiWii.RAW_GPS:
+                temp = struct.unpack('<2B2I4H',data)
+                # to do
+            elif cmd == MultiWii.COMP_GPS:
+                temp = struct.unpack('<2HB',data)
+                # to do
+            elif cmd == MultiWii.NAV_STATUS:
+                temp = struct.unpack('<5BH',data)
+                # to do
+            elif cmd == MultiWii.GPSSVINFO:
+                temp = struct.unpack('<5B',data)
+                # to do
+            elif cmd == MultiWii.GPSSTATISTICS:
+                temp = struct.unpack('<H3I3H',data)
+                # to do
+            elif cmd == MultiWii.MSP_FEATURE:
+                temp = struct.unpack('<I',data)
+                # to do
+            elif cmd == MultiWii.MSP_BOARD_ALIGNMENT:
+                temp = struct.unpack('<3H',data)
+                # to do
+            elif cmd == MultiWii.MSP_RX_CONFIG:
+                pass
+                # to do
+            elif cmd == MultiWii.MSP_FAILSAFE_CONFIG:
+                pass
+                # to do
+            elif cmd == MultiWii.MSP_RXFAIL_CONFIG:
+                pass
+                # to do
+            elif cmd == MultiWii.MSP_SENSOR_ALIGNMENT:
+                temp = struct.unpack('<3B',data)
+                # to do
+            elif cmd == MultiWii.WP:
+                temp = struct.unpack('<2B3i3h2B',data)
+                rec_obj.tempMission = list(temp)
+            else:
+                return "No return error!"
+        except Exception, error:
+            print('Get Data Error')
+            print(Exception)
+            print error
+            pass
+
+    def requestDataLoose(self, data_length, send_code, send_data, obj, addr_long_list):
+        frameid = obj.frame_id
+        d_addr_long = obj.address_long
+        d_addr = obj.address_short
+
+        rec_data = ['','','']
+        while True:
+            self.sendCMDNew(data_length, send_code, send_data, obj)
+            try:
+                with time_limit(0.005):   # 0.005
+                    if send_code == MultiWii.MODE_RANGES:
+                        rec_data = self.readZBMsg(1)
+                    else:
+                        rec_data = self.readZBMsg(1)
+            except:
+                pass
+            # to do: check src address, if not match the obj address, then discard
+            validation = self.preCheckReadDataLoose(rec_data, send_code, send_data, addr_long_list)
+            if validation == True:
+                break
+            else:
+                pass
+        return rec_data
+
+    def preCheckReadDataLoose(self, rec_data_pack, send_code, send_data, addr_long_list):
+        if len(rec_data_pack[2]) >= 5:
+            header = rec_data_pack[2][0:3]
+            if header == '$M>':
+                pass
+            else:
+                return False
+
+            #if (rec_data_pack[0][0:4] == '\x00\x13\xA2\x00'):
+            if rec_data_pack[0] in addr_long_list:
+                return True
+            else:
+                return False
+        else:
+            return False
