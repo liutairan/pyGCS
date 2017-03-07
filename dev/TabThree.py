@@ -115,7 +115,9 @@ class TabThree(wx.Panel):
         # Buttons
         self.editWPButton1 = wx.Button(self, -1, 'Edit', pos = (0,280), size = (50,20))
         self.uploadWPButton1 = wx.Button(self, -1, 'Upload', pos = (55,280), size = (65,20))
+        self.Bind(wx.EVT_BUTTON, self.OnClickUploadWPButton, self.uploadWPButton1)
         self.downloadWPButton1 = wx.Button(self, -1, 'Download', pos = (125,280), size = (75,20))
+        self.Bind(wx.EVT_BUTTON, self.OnClickDownloadWPButton, self.downloadWPButton1)
         self.startMissionButton1 = wx.Button(self, -1, 'Start', pos = (205,280), size = (60,20))
         self.abortMissionButton1 = wx.Button(self, -1, 'Abort', pos = (270,280), size = (60,20))
 
@@ -137,6 +139,39 @@ class TabThree(wx.Panel):
 
         # Show
         self.Show(True)
+
+    def FormatWPs(self, waypointList):
+        retList = []
+        for i in range(len(waypointList)):
+            tempDict = waypointList[i]
+            temptype = str(tempDict['type'])
+            temptypeId = 0x04
+            if temptype == 'WP':
+                temptypeId = 0x01
+            elif temptype == 'RTH':
+                temptypeId = 0x04
+            elif temptype == 'POS_UN':
+                temptypeId = 0x02
+            elif temptype == 'POS_TIME':
+                temptypeId = 0x03
+            else:
+                pass
+            tempList = [tempDict['id'],temptypeId,
+                        int(tempDict['lat']*(10**7)), int(tempDict['lon']*(10**7)), int(tempDict['alt']),
+                        int(tempDict['p1']), int(tempDict['p2']), int(tempDict['p3']), 0x00]
+            retList.append(tempList)
+        retList[-1][-1] = 0xa5
+        return retList
+
+    def OnClickUploadWPButton(self, event):
+        if len(self._waypointList) > 0:
+            self.deh._waypointLists_air[1] = self.FormatWPs(self._waypointList)
+            self.deh.serialMode = 12
+        else:
+            print('No WP defined.')
+
+    def OnClickDownloadWPButton(self, event):
+        pass
 
     def OnUpdate(self, global_obj):
         if global_obj.sensor_flags['acc'] == 1:

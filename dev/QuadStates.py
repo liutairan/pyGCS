@@ -85,5 +85,5 @@ class QuadStates():
                             'HEADINGLOCK':0,'SURFACE':0,'TURNASSIST':0,'NAVLAUNCH':0}
         self.armStatus = {'OK_TO_ARM':0, 'PREVENT_ARMING':0, 'ARMED':0, 'WAS_EVER_ARMED':0, 'BLOCK_UAV_NOT_LEVEL':0, 'BLOCK_SENSORS_CALIB':0, 'BLOCK_SYSTEM_OVERLOAD':0, 'BLOCK_NAV_SAFETY':0, 'BLOCK_COMPASS_NOT_CALIB':0, 'BLOCK_ACC_NOT_CALIB':0, 'UNUSED':0, 'BLOCK_HARDWARE_FAILURE':0}
 
-        self.missionLists = []
+        self.missionList = []
         self.tempMission = []

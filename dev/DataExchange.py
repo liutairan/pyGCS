@@ -83,26 +83,36 @@ class WorkerProcess(multiprocessing.Process):
                 with time_limit(0.001):
                     next_task = self.task_queue.get()
             except:
-                next_task = 0
+                next_task = [self.modeSelection]
 
-            if next_task == 0:
+            if next_task[0] == 0:
                 self.modeSelection = 0
-                print(self.modeSelection)
+                #print(self.modeSelection)
                 self.sch.RegularLoadInfoLoose()
                 self.result_queue.put(self.sch.quadObjs)
-                time.sleep(0.1)
-            elif next_task == 1:
+                time.sleep(0.2)
+            elif next_task[0] == 1:
                 self.modeSelection = 1
-                print(self.modeSelection)
-                self.modeSelection = 0
-            elif next_task == 2:
+                #print(self.modeSelection)
+                #self.modeSelection = 0
+            elif next_task[0] == 2:
                 self.modeSelection = 2
-                print(self.modeSelection)
-                self.modeSelection = 0
-            elif next_task == 3:
+                #print(self.modeSelection)
+                #self.modeSelection = 0
+            elif next_task[0] == 3:
                 self.modeSelection = 3
-                print(self.modeSelection)
-                self.modeSelection = 0
+                #print(self.modeSelection)
+                #self.modeSelection = 0
+            elif next_task[0] == 11:
+                tempMissionList = next_task[1]
+                self.sch.UploadWPs(next_task)
+            elif next_task[0] == 12:
+                tempMissionList = next_task[1]
+                self.sch.UploadWPs(next_task)
+            elif next_task[0] == 13:
+                tempMissionList = next_task[1]
+                self.sch.UploadWPs(next_task)
+                #print(next_task)
             else:
                 pass
         print "Exited"
@@ -126,6 +136,7 @@ class DataExchange(object):
         self._observers = []
         self._addressList = [[],[],[]]
         self._waypointLists = [[],[],[]]
+        self._waypointLists_air = [[],[],[]]
         self._serialPort = ''
         self._serialOn = False
         self.workerSerial = None
@@ -187,11 +198,17 @@ class DataExchange(object):
     def get_serialMode(self):
         return self._serialMode
 
-    def set_serialMode(self, value):
-        self._serialMode = value
+    def set_serialMode(self, mode):
+        self._serialMode = mode
         if self.serialOn == True:
-            #pass
-            self.task.put(self._serialMode)
+            if self._serialMode == 11:
+                self.task.put([self._serialMode, self._waypointLists_air[0]])
+            elif self._serialMode == 12:
+                self.task.put([self._serialMode, self._waypointLists_air[1]])
+            elif self._serialMode == 13:
+                self.task.put([self._serialMode, self._waypointLists_air[2]])
+            else:
+                self.task.put([self._serialMode])
             #self.workerSerial.mode(self.serialMode)
 
     serialMode = property(get_serialMode, set_serialMode)

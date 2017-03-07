@@ -227,7 +227,7 @@ class MultiWii:
             start = time.time()
             totaldata = self.requestData(data_length, send_code, send_data, obj)
             datalength = struct.unpack('<B', totaldata[3])[0]
-            print(datalength)
+            #print(datalength)
             cmd = struct.unpack('<B', totaldata[4])[0]
             data = totaldata[5:]
 
@@ -415,8 +415,8 @@ class MultiWii:
             else:
                 return "No return error!"
         except Exception, error:
-            print(Exception)
-            print error
+            #print(Exception)
+            #print error
             pass
 
     def requestData(self, data_length, send_code, send_data, obj):
@@ -586,6 +586,8 @@ class MultiWii:
             tempRecMission = self.downloadMission(index, obj)
             uploadStatus = self.checkMissionUpload(mission, tempRecMission)
             if uploadStatus == True:
+                #print('Rec mission')
+                print(tempRecMission)
                 break
             else:
                 pass
@@ -596,10 +598,11 @@ class MultiWii:
         else:
             return False
 
-    def uploadMissions(self, missionList, obj):
+    def uploadMissions(self, obj):
         frameid = obj.frame_id
         d_addr_long = obj.address_long
         d_addr = obj.address_short
+        missionList = obj.missionList
 
         for i in range(len(missionList)):
             self.uploadMission(missionList[i], obj)
@@ -625,9 +628,9 @@ class MultiWii:
         mission = []
         while True:
             self.getData(1, MultiWii.WP,[id], obj)
-            if len(self.tempMission) > 0:
-                if self.tempMission[0] == id:
-                    mission = self.tempMission
+            if len(obj.tempMission) > 0:
+                if obj.tempMission[0] == id:
+                    mission = obj.tempMission
                     break
         return mission
 
@@ -874,9 +877,9 @@ class MultiWii:
             else:
                 return "No return error!"
         except Exception, error:
-            print('Get Data Error')
-            print(Exception)
-            print error
+            #print('Get Data Error')
+            #print(Exception)
+            #print error
             pass
 
     def requestDataLoose(self, data_length, send_code, send_data, obj, addr_long_list):

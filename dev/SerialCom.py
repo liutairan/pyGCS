@@ -145,8 +145,19 @@ class SerialCommunication(object):
                 print('Regular load error')
                 pass
 
-    def UploadWPs(self):
-        pass
+    def UploadWPs(self, mission_task):
+        quadId = mission_task[0] - 10
+        mission = mission_task[1]
+        quadObjId = quadId - 1
+
+        for i in range(quadId):
+            if len(self.addressList[i]) == 0:
+                quadObjId = quadObjId - 1
+            else:
+                pass
+        self.quadObjs[quadObjId].missionList = mission
+        self.board.uploadMissions(self.quadObjs[quadObjId])
+        print("All missions uploaded successfully. Quad: " + str(quadId))
 
     def DownloadWPs(self):
         pass
