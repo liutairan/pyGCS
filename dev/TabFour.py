@@ -66,10 +66,12 @@ class TabFour(wx.Panel):
         statusLights = wx.StaticBox(self, -1, 'Status', pos = (400,30), size = (70,200))
 
         # Outer status
-        lat = wx.StaticText(self, -1, 'Lat: ', pos = (165,45), size = (70,20))
-        lon = wx.StaticText(self, -1, 'Lon: ', pos = (165,70), size = (70,20))
-        alt = wx.StaticText(self, -1, 'Alt: ', pos = (165,95), size = (70,20))
-        numberSat = wx.StaticText(self, -1, 'No. Sat: ', pos = (165,120), size = (70,20))
+        self.lat = wx.StaticText(self, -1, 'Lat: ', pos = (165,45), size = (70,20))
+        self.lon = wx.StaticText(self, -1, 'Lon: ', pos = (165,70), size = (70,20))
+        self.alt = wx.StaticText(self, -1, 'Alt: ', pos = (165,95), size = (70,20))
+        self.numberSat = wx.StaticText(self, -1, 'No. Sat: ', pos = (165,120), size = (70,20))
+        self.fixType = wx.StaticText(self, -1, 'Fix Type: ', pos = (165,145), size = (70,20))
+        self.hdop = wx.StaticText(self, -1, 'HDOP: ', pos = (165,170), size = (70,20))
 
         # Inner status
         self.heading = wx.StaticText(self, -1, 'Heading: ', pos = (5,45), size = (140,20))
@@ -267,12 +269,21 @@ class TabFour(wx.Panel):
         self.heading.SetLabel('Heading: '+str(global_obj.msp_attitude['heading']))
         self.angx.SetLabel('ANG-X: '+str(global_obj.msp_attitude['angx']))
         self.angy.SetLabel('ANG-Y: '+str(global_obj.msp_attitude['angy']))
+
+        # Outer states
+        self.lat.SetLabel('Lat: '+str(global_obj.msp_raw_gps['gps_lat']))
+        self.lon.SetLabel('Lon: '+str(global_obj.msp_raw_gps['gps_lon']))
+        self.alt.SetLabel('Alt: '+str(global_obj.msp_raw_gps['gps_altitude']))
+        self.numberSat.SetLabel('No. Sat: '+str(global_obj.msp_raw_gps['gps_numsat']))
+        self.fixType.SetLabel('Fix Type: '+str(global_obj.msp_raw_gps['gps_fix']))
+        self.hdop.SetLabel('HDOP: '+str(global_obj.msp_raw_gps['gps_hdop']))
+
         self.voltLight1.SetLabel(str(global_obj.msp_analog['vbat']/10.0)+' V')
         if global_obj.msp_analog['vbat'] >= 114:
             self.voltLight1.SetBackgroundColour((0,255,0))
         elif (global_obj.msp_analog['vbat'] >= 108) and (global_obj.msp_analog['vbat'] < 114):
             self.voltLight1.SetBackgroundColour((255,200,0))
-        elif (global_obj.msp_analog['vbat'] >= 101) and (global_obj.msp_analog['vbat'] < 108):
+        elif (global_obj.msp_analog['vbat'] >= 102) and (global_obj.msp_analog['vbat'] < 108):
             self.voltLight1.SetBackgroundColour((255,0,0))
         else:
             self.voltLight1.SetBackgroundColour((255,0,0))

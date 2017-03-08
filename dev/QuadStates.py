@@ -49,18 +49,22 @@ class QuadStates():
 
         self.msp_altitude = {'estalt':0, 'vario':0}
         self.msp_sonar_altitude = {'sonar_altitude':0}
+
+        # GPS
         self.msp_raw_gps = {'gps_fix':0, 'gps_numsat':0, 'gps_lat':0, 'gps_lon':0, 'gps_altitude':0, 'gps_speed':0, 'gps_ground_course':0, 'gps_hdop':0}
+        self.msp_comp_gps = {'range':0, 'direction':0, 'update':0}
+        self.msp_gps_svinfo = {'gps_hdop':0}
+        self.msp_gps_statistics = {'gps_last_message_dt':0, 'gps_errors':0, 'gps_timeouts':0, 'gps_packet_count':0, 'gps_hdop':0, 'gps_eph':0, 'gps_epv':0}
+
         self.msp_attitude = {'angx':0, 'angy':0, 'heading':0}
 
         self.msp_wp = {'wp_no':0, 'action':0, 'lat':0, 'lon':0, 'altitude':0, 'p1':0, 'p2':0, 'p3':0, 'flag':0}
 
-        self.msp_nav_status = {'gps_mode':0, 'nav_mode':0, 'action':0, 'wp_number':0, 'nav_error':0, 'target_bearing':0}
+        self.msp_nav_status = {'nav_mode':0, 'nav_state':0, 'action':0, 'wp_number':0, 'nav_error':0, 'mag_hold_heading':0}  # 'target_bearing'
 
         self.msp_nav_config = {'flag1':0, 'flag2':0, 'wp_radius':0, 'safe_wp_distance':0, 'nav_max_altitude':0, 'nav_speed_max':0, 'nav_speed_min':0, 'crosstrack_gain':0, 'nav_bank_max':0, 'rth_altitude':0, 'land_speed':0, 'fence':0, 'max_wp_number':0}
 
         self.msp_radio = {'rxerrors':0, 'fixed_errors':0, 'localrssi':0, 'remrssi':0, 'txbuf':0, 'noise':0, 'remnoise':0}
-
-        self.msp_comp_gps = {'range':0, 'direction':0, 'update':0}
 
         self.msp_rc_tuning = {'rc_rate':0, 'rc_expo':0, 'rollpitchrate':0, 'yawrate':0, 'dynthrpid':0, 'throttle_mid':0, 'throttle_expo':0}
 
@@ -83,7 +87,12 @@ class QuadStates():
                             'MAG':0,'HEADFREE':0,'HEADADJ':0,'NAVRTH':0,'POSHOLD':0,
                             'PASSTHRU':0,'HOMERESET':0,'NAVWP':0,'AIRMODE':0,'GCSNAV':0,
                             'HEADINGLOCK':0,'SURFACE':0,'TURNASSIST':0,'NAVLAUNCH':0}
-        self.armStatus = {'OK_TO_ARM':0, 'PREVENT_ARMING':0, 'ARMED':0, 'WAS_EVER_ARMED':0, 'BLOCK_UAV_NOT_LEVEL':0, 'BLOCK_SENSORS_CALIB':0, 'BLOCK_SYSTEM_OVERLOAD':0, 'BLOCK_NAV_SAFETY':0, 'BLOCK_COMPASS_NOT_CALIB':0, 'BLOCK_ACC_NOT_CALIB':0, 'UNUSED':0, 'BLOCK_HARDWARE_FAILURE':0}
+
+        self.armStatus = {'OK_TO_ARM':0, 'PREVENT_ARMING':0, 'ARMED':0,
+                          'WAS_EVER_ARMED':0, 'BLOCK_UAV_NOT_LEVEL':0,
+                          'BLOCK_SENSORS_CALIB':0, 'BLOCK_SYSTEM_OVERLOAD':0,
+                          'BLOCK_NAV_SAFETY':0, 'BLOCK_COMPASS_NOT_CALIB':0,
+                          'BLOCK_ACC_NOT_CALIB':0, 'UNUSED':0, 'BLOCK_HARDWARE_FAILURE':0}
 
         self.missionList = []
         self.tempMission = []

@@ -369,27 +369,48 @@ class MultiWii:
                 pass
                 # to do
             elif cmd == MultiWii.BOXIDS: # checked
-                #print('right')
-                #print(datalength)
-                #print(len(data))
                 temp = struct.unpack('<'+'B'*datalength + 'B',data)
                 obj.activeBoxes = list(temp)
-                #print(temp)
                 # to do
             elif cmd == MultiWii.RAW_GPS:
-                temp = struct.unpack('<2B2I4H',data)
-                # to do
+                temp = struct.unpack('<2B2I4HB',data)  # with checksum
+                obj.msp_raw_gps['gps_fix'] = temp[0]
+                obj.msp_raw_gps['gps_numsat'] = temp[1]
+                obj.msp_raw_gps['gps_lat'] = temp[2]
+                obj.msp_raw_gps['gps_lon'] = temp[3]
+                obj.msp_raw_gps['gps_altitude'] = temp[4]
+                obj.msp_raw_gps['gps_speed'] = temp[5]
+                obj.msp_raw_gps['gps_ground_course'] = temp[6]
+                obj.msp_raw_gps['gps_hdop'] = temp[7]
+
             elif cmd == MultiWii.COMP_GPS:
-                temp = struct.unpack('<2HB',data)
+                temp = struct.unpack('<2H2B',data)   # with checksum
+                obj.msp_comp_gps['range'] = temp[0]
+                obj.msp_comp_gps['direction'] = temp[1]
+                obj.msp_comp_gps['update'] = temp[2]
                 # to do
             elif cmd == MultiWii.NAV_STATUS:
-                temp = struct.unpack('<5BH',data)
+                temp = struct.unpack('<5BHB',data)  # with checksum
+                obj.msp_nav_status['nav_mode'] = temp[0]
+                obj.msp_nav_status['nav_state'] = temp[1]
+                obj.msp_nav_status['action'] = temp[2]
+                obj.msp_nav_status['wp_number'] = temp[3]
+                obj.msp_nav_status['nav_error'] = temp[4]
+                obj.msp_nav_status['mag_hold_heading'] = temp[5]
                 # to do
             elif cmd == MultiWii.GPSSVINFO:
-                temp = struct.unpack('<5B',data)
+                temp = struct.unpack('<6B',data)     # with checksum
+                obj.msp_gps_svinfo['gps_hdop'] = temp[3]
                 # to do
             elif cmd == MultiWii.GPSSTATISTICS:
-                temp = struct.unpack('<H3I3H',data)
+                temp = struct.unpack('<H3I3HB',data)   # with checksum
+                obj.msp_gps_statistics['gps_last_message_dt'] = temp[0]
+                obj.msp_gps_statistics['gps_errors'] = temp[1]
+                obj.msp_gps_statistics['gps_timeouts'] = temp[2]
+                obj.msp_gps_statistics['gps_packet_count'] = temp[3]
+                obj.msp_gps_statistics['gps_hdop'] = temp[4]
+                obj.msp_gps_statistics['gps_eph'] = temp[5]
+                obj.msp_gps_statistics['gps_epv'] = temp[6]
                 # to do
             elif cmd == MultiWii.MSP_FEATURE:
                 temp = struct.unpack('<I',data)
@@ -538,6 +559,7 @@ class MultiWii:
         obj.sensor_flags['mag'] = int(temp[13])
         obj.sensor_flags['baro'] = int(temp[14])
         obj.sensor_flags['acc'] = int(temp[15])
+        #print(obj.sensor_flags)
 
     def parseArmingFlags(self, obj):
         armflag = obj.msp_status_ex['armingFlags']
@@ -558,6 +580,7 @@ class MultiWii:
     def parseFlightModeFlags(self, obj):
         activeboxes = obj.activeBoxes
         flightModeFlags = obj.msp_status_ex['flightModeFlags']
+        #print(flightModeFlags)
         if len(activeboxes) == 0:
             return False
         else:
@@ -566,11 +589,27 @@ class MultiWii:
             angleInd = activeboxes.index(1)
             horizonInd = activeboxes.index(2)
             altholdInd = activeboxes.index(3)
+            magInd = activeboxes.index(5)
+            headfreeInd = activeboxes.index(6)
+            headadjInd = activeboxes.index(7)
+            rthInd = activeboxes.index(10)
+            posholdInd = activeboxes.index(11)
             failsafeInd = activeboxes.index(27)
+            navwpInd = activeboxes.index(28)
+            airInd = activeboxes.index(29)
+            homeresetInd = activeboxes.index(30)
+            gcsnavInd = activeboxes.index(31)
+            headinglockInd = activeboxes.index(32)
+            surfaceInd = activeboxes.index(33)
+            turnassistInd = activeboxes.index(35)
             obj.flightModes['ARM'] = int(temp[31-armInd])
             obj.flightModes['ANGLE'] = int(temp[31-angleInd])
             obj.flightModes['HORIZON'] = int(temp[31-horizonInd])
             obj.flightModes['ALTHOLD'] = int(temp[31-altholdInd])
+            obj.flightModes['NAVRTH'] = int(temp[31-rthInd])
+            obj.flightModes['POSHOLD'] = int(temp[31-posholdInd])
+            obj.flightModes['NAVWP'] = int(temp[31-navwpInd])
+            obj.flightModes['GCSNAV'] = int(temp[31-gcsnavInd])
             obj.flightModes['FAILSAFE'] = int(temp[31-failsafeInd])
             return True
 

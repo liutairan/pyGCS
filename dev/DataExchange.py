@@ -93,6 +93,9 @@ class WorkerProcess(multiprocessing.Process):
                 time.sleep(0.2)
             elif next_task[0] == 1:
                 self.modeSelection = 1
+                self.sch.RegularLoadInfo()
+                self.result_queue.put(self.sch.quadObjs)
+                time.sleep(0.2)
                 #print(self.modeSelection)
                 #self.modeSelection = 0
             elif next_task[0] == 2:
@@ -104,6 +107,7 @@ class WorkerProcess(multiprocessing.Process):
                 #print(self.modeSelection)
                 #self.modeSelection = 0
             elif next_task[0] == 11:
+                #print(next_task)
                 tempMissionList = next_task[1]
                 self.sch.UploadWPs(next_task)
             elif next_task[0] == 12:
