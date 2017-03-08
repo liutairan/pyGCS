@@ -127,8 +127,13 @@ class SerialCommunication(object):
             self.board.getData(0,MultiWii.MSP_STATUS_EX,[],obj)
             self.board.parseSensorStatus(obj)
             self.board.parseFlightModeFlags(obj)
-            #self.board.getData(0,MultiWii.ATTITUDE,[],obj)
+            self.board.getData(0,MultiWii.ATTITUDE,[],obj)
             self.board.getData(0,MultiWii.ANALOG,[],obj)
+            time.sleep(0.05)
+            self.board.getData(0,MultiWii.RAW_GPS,[],obj)
+            time.sleep(0.05)
+            #self.board.getData(0,MultiWii.GPSSTATISTICS,[],obj)
+            #time.sleep(0.05)
         except Exception, error:
             print('Failed')
             print(Exception)
@@ -156,6 +161,7 @@ class SerialCommunication(object):
             else:
                 pass
         self.quadObjs[quadObjId].missionList = mission
+        print("Start uploaded missions. Quad: " + str(quadId))
         self.board.uploadMissions(self.quadObjs[quadObjId])
         print("All missions uploaded successfully. Quad: " + str(quadId))
 
