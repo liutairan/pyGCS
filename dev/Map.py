@@ -175,6 +175,11 @@ class Map(object):
         y = nearLat[0]
         return x,y
 
+    def return_origin(self):
+        self._centerLat = self._originLat
+        self._centerLon = self._originLon
+        self.loadImage()
+
     def move(self, dx, dy):
         latStep, lonStep = self._local_tile_step()
         local_dx_to_lon = dx/(_TILESIZE*1.0) * lonStep
@@ -219,6 +224,18 @@ class Map(object):
             self.zoomlevel = 21
         elif self.zoomlevel < 9:
             self.zoomlevel = 9
+        self.loadImage()
+
+    def _find_zoomlevel(self, min_lat, max_lat, min_lon, max_lon):
+        mid_lat = 0.5*(max_lat + min_lat)
+        mid_lon = 0.5*(max_lon + min_lon)
+        len_lat = (max_lat - min_lat)
+        len_lon = (max_lon - min_lon)
+
+    def _reload(self, lat, lon, zoomlevel):
+        self._centerLat = lat
+        self._centerLon = lon
+        self._zoomlevel = zoomlevel
         self.loadImage()
 
 
