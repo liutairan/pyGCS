@@ -373,7 +373,7 @@ class MultiWii:
                 obj.activeBoxes = list(temp)
                 # to do
             elif cmd == MultiWii.RAW_GPS:
-                temp = struct.unpack('<2B2I4HB',data)  # with checksum
+                temp = struct.unpack('<2B2i4HB',data)  # with checksum
                 obj.msp_raw_gps['gps_fix'] = temp[0]
                 obj.msp_raw_gps['gps_numsat'] = temp[1]
                 obj.msp_raw_gps['gps_lat'] = temp[2]
