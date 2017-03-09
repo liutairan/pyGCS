@@ -23,4 +23,4 @@ Currently, this project is still under construction and the focus point will be 
 
 # Sample:
 Screenshot: 
-![alt text](https://github.com/liutairan/pyGCS/blob/dev/dev/Sample-Figures/Snip20170228_7.png "Sample image")
+![alt text](https://github.com/liutairan/pyGCS/blob/dev/dev/Sample-Figures/Snip20170309_1.png "Sample image")
