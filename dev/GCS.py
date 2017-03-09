@@ -212,6 +212,8 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnDecZoom, self.decZoomButton)
         self.autoZoomButton = wx.Button(self.pnl, -1, 'Auto Zoom', pos = (55, 642), size = (85,20))
         self.Bind(wx.EVT_BUTTON, self.OnAutoZoom, self.autoZoomButton)
+        self.retHomeButton = wx.Button(self.pnl, -1, 'Return Home', pos = (143, 642), size = (95,20))
+        self.Bind(wx.EVT_BUTTON, self.OnReturnHome, self.retHomeButton)
         # Show
         self.Show(True)
 
@@ -256,8 +258,39 @@ class MainFrame(wx.Frame):
 
     def OnAutoZoom(self, event):
         # auto select the zoom level so that all the waypoints are shown in the frame
-        #self._zoom = self._zoom - 1
-        #self.mapHandle.zoom(-1)
+        # if no gps coordinates or waypoints, then do nothing
+        existGPSs = self.dataExchangeHandle._currentGPS
+        existWPs = self.dataExchangeHandle._waypointLists
+        self._auto_zoom_and_center(existGPSs, existWPs)
+        self.Refresh()
+
+    def _auto_zoom_and_center(self, gps, wps):
+        tempGPSList = []
+        latList = []
+        lonList = []
+        for dev in range(3):
+            if len(gps[dev]) > 0:
+                tempGPSList.append(gps[dev])
+                latList.append(gps[dev][0])
+                lonList.append(gps[dev][1])
+            tempList = wps[dev]
+            if len(tempList) > 0:
+                for i in range(len(tempList)):
+                    tempWP = tempList[i]
+                    tempGPSList.append([tempWP['lat'], tempWP['lon']])
+                    latList.append(tempWP['lat'])
+                    lonList.append(tempWP['lon'])
+        if len(tempGPSList) >= 2:
+            max_lat = max(latList)
+            min_lat = min(latList)
+            max_lon = max(lonList)
+            min_lon = min(lonList)
+            [_center_lat, _center_lon, _zoomlevel] = self.mapHandle._find_zoomlevel(min_lat, max_lat, min_lon, max_lon)
+            self.mapHandle._reload(_center_lat, _center_lon, _zoomlevel)
+            self.Refresh()
+
+    def OnReturnHome(self, event):
+        self.mapHandle.return_origin()
         self.Refresh()
 
     def OnSize(self, event):

@@ -175,6 +175,11 @@ class Map(object):
         y = nearLat[0]
         return x,y
 
+    def return_origin(self):
+        self._centerLat = self._originLat
+        self._centerLon = self._originLon
+        self.loadImage()
+
     def move(self, dx, dy):
         latStep, lonStep = self._local_tile_step()
         local_dx_to_lon = dx/(_TILESIZE*1.0) * lonStep
@@ -193,6 +198,18 @@ class Map(object):
 
         _latStep = abs(self._pix_to_lat(0, latpix, ntiles, _TILESIZE, self.zoomlevel) - self._pix_to_lat(2, latpix, ntiles, _TILESIZE, self.zoomlevel)) /2
         _lonStep = abs(self._pix_to_lon(0, lonpix, ntiles, _TILESIZE, self.zoomlevel) - self._pix_to_lon(2, lonpix, ntiles, _TILESIZE, self.zoomlevel)) /2
+        return _latStep, _lonStep
+
+    def _tile_step(self, lat, lon, zoomlevel, ntiles=3):   # the output stands for: at current lat & lon & zoom level, 640 pixels equivalent to how many degree of lat/lon; or the tile has how many degree of lat/lon
+        latitude = lat
+        longitude = lon
+
+        lonpix = _EARTHPIX + longitude * math.radians(_pixrad)
+        sinlat = math.sin(math.radians(latitude))
+        latpix = _EARTHPIX - _pixrad * math.log((1 + sinlat)/(1 - sinlat)) / 2
+
+        _latStep = abs(self._pix_to_lat(0, latpix, ntiles, _TILESIZE, zoomlevel) - self._pix_to_lat(2, latpix, ntiles, _TILESIZE, zoomlevel)) /2
+        _lonStep = abs(self._pix_to_lon(0, lonpix, ntiles, _TILESIZE, zoomlevel) - self._pix_to_lon(2, lonpix, ntiles, _TILESIZE, zoomlevel)) /2
         return _latStep, _lonStep
 
     def loadImage(self):
@@ -219,6 +236,34 @@ class Map(object):
             self.zoomlevel = 21
         elif self.zoomlevel < 9:
             self.zoomlevel = 9
+        self.loadImage()
+
+    def _find_zoomlevel(self, min_lat, max_lat, min_lon, max_lon):
+        mid_lat = 0.5*(max_lat + min_lat)
+        mid_lon = 0.5*(max_lon + min_lon)
+        len_lat = (max_lat - min_lat)
+        len_lon = (max_lon - min_lon)
+        _zoom_level = [22,21,20,19,18,17,16,15,14,13,12,11,10,9]
+        _lat_steps = []
+        _lon_steps = []
+        for i in range(len(_zoom_level)):
+            temp_lat, temp_lon = self._tile_step(mid_lat, mid_lon, _zoom_level[i])
+            _lat_steps.append(temp_lat)
+            _lon_steps.append(temp_lon)
+        lat_level_ind = 0
+        while len_lat >= _lat_steps[lat_level_ind]:
+            lat_level_ind = lat_level_ind + 1
+        lon_level_ind = 0
+        while len_lon >= _lon_steps[lon_level_ind]:
+            lon_level_ind = lon_level_ind + 1
+        ret_zoomlevel = min(_zoom_level[lat_level_ind], _zoom_level[lon_level_ind])
+
+        return [mid_lat, mid_lon, ret_zoomlevel]
+
+    def _reload(self, lat, lon, zoomlevel):
+        self._centerLat = lat
+        self._centerLon = lon
+        self._zoomlevel = zoomlevel
         self.loadImage()
 
 
