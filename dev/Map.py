@@ -58,7 +58,7 @@ __status__ = "Development"
 _EARTHPIX = 268435456  # Number of pixels in half the earth's circumference at zoom = 21
 _DEGREE_PRECISION = 6  # Number of decimal places for rounding coordinates
 _TILESIZE = 640        # Larget tile we can grab without paying
-_GRABRATE = 4          # Fastest rate at which we can download tiles without paying
+_GRABRATE = 10          # Fastest rate at which we can download tiles without paying
 
 _pixrad = _EARTHPIX / math.pi
 
@@ -72,12 +72,13 @@ class Map(object):
 
         self._originLat =  30.4081580  # 37.7913838
         self._originLon = -91.1795330  #-79.44398934
-        self.latlonDict = {'21':{'lat':[],'lon':[]}, '20':{'lat':[],'lon':[]}, '19':{'lat':[],'lon':[]},
-                           '18':{'lat':[],'lon':[]}, '17':{'lat':[],'lon':[]}, '16':{'lat':[],'lon':[]},
-                           '15':{'lat':[],'lon':[]}, '14':{'lat':[],'lon':[]}, '13':{'lat':[],'lon':[]},
-                           '12':{'lat':[],'lon':[]}, '11':{'lat':[],'lon':[]}, '10':{'lat':[],'lon':[]},
-                           '9':{'lat':[],'lon':[]}, '8':{'lat':[],'lon':[]}, '7':{'lat':[],'lon':[]},
-                           '6':{'lat':[],'lon':[]}, '5':{'lat':[],'lon':[]}, '4':{'lat':[],'lon':[]}
+        self.latlonDict = {'22':{'lat':[],'lon':[]}, '21':{'lat':[],'lon':[]}, '20':{'lat':[],'lon':[]},
+                           '19':{'lat':[],'lon':[]}, '18':{'lat':[],'lon':[]}, '17':{'lat':[],'lon':[]},
+                           '16':{'lat':[],'lon':[]}, '15':{'lat':[],'lon':[]}, '14':{'lat':[],'lon':[]},
+                           '13':{'lat':[],'lon':[]}, '12':{'lat':[],'lon':[]}, '11':{'lat':[],'lon':[]},
+                           '10':{'lat':[],'lon':[]}, '9':{'lat':[],'lon':[]}, '8':{'lat':[],'lon':[]},
+                           '7':{'lat':[],'lon':[]}, '6':{'lat':[],'lon':[]}, '5':{'lat':[],'lon':[]},
+                           '4':{'lat':[],'lon':[]}
                            }
         self._init_tile_index()
 
@@ -129,7 +130,7 @@ class Map(object):
         self.loadImage()
 
     def _init_tile_index(self):
-        for templevel in range(9,22):
+        for templevel in range(9,23):
             # level number: templevel
             iter_steps = 2 ** (templevel-9)
             latDict = []
@@ -232,6 +233,7 @@ class Map(object):
 
     def zoom(self, dlevel):
         self.zoomlevel = self.zoomlevel + int(dlevel)
+        print(self.zoomlevel)
         if self.zoomlevel > 21:
             self.zoomlevel = 21
         elif self.zoomlevel < 9:
@@ -257,7 +259,7 @@ class Map(object):
         while len_lon >= _lon_steps[lon_level_ind]:
             lon_level_ind = lon_level_ind + 1
         ret_zoomlevel = min(_zoom_level[lat_level_ind], _zoom_level[lon_level_ind])
-
+        print('Zoom Level: '+str(ret_zoomlevel))
         return [mid_lat, mid_lon, ret_zoomlevel]
 
     def _reload(self, lat, lon, zoomlevel):
@@ -427,11 +429,14 @@ class Map(object):
             if lon_rounded < min_lon:
                 min_lon = lon_rounded
 
-            strLat = str(lat_rounded)
-            strLon = str(lon_rounded)
+            strLat = "{:.6f}".format(lat_rounded)
+            strLon = "{:.6f}".format(lon_rounded)
             tempName = strLat+'_'+strLon+'_'+str(self.zoomlevel)+'_'+self.maptype+'_'+str(self._width)+'_'+str(self._height)+'.jpg'
+            #print(tempName)
             tile = Image.open('mapscache/'+tempName)
+            #print('successfully load image')
             bigimage.paste(tile, (col_num*_TILESIZE, row_num*_TILESIZE))
+        #print('---')
         return bigimage, [max_lat, min_lat, min_lon, max_lon]
 
     def _cropImage(self, origin_image, border):
@@ -459,12 +464,15 @@ class Map(object):
         zoomlevel = tileIndex[0]
         x = tileIndex[1]
         y = tileIndex[2]
-        lat = self.latlonDict[str(int(zoomlevel))]['lat'][x]
-        lon = self.latlonDict[str(int(zoomlevel))]['lon'][y]
+        lat = self.latlonDict[str(int(zoomlevel))]['lat'][y]   # bug here: x and y exchange
+        lon = self.latlonDict[str(int(zoomlevel))]['lon'][x]
         lat_rounded = self._roundto(lat, 6)
         lon_rounded = self._roundto(lon, 6)
+        strLat = "{:.6f}".format(lat_rounded)
+        strLon = "{:.6f}".format(lon_rounded)
         self._grab_tile(lat_rounded, lon_rounded, zoomlevel, self.maptype, _TILESIZE, 1./_GRABRATE)
-        strOut = str(lat_rounded)+' '+str(lon_rounded)+' '+ str(zoomlevel)+' '+ self.maptype +' '+str(x)+' '+str(y)+'\n'
+        strOut = strLat+' '+strLon+' '+ str(zoomlevel)+' '+ self.maptype +' '+str(x)+' '+str(y)+'\n'
+
         with open('mapcache.txt', 'at') as outf:
             outf.write(strOut)
 

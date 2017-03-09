@@ -45,7 +45,7 @@ def loadData(path):
     dataList = []
     for temparea in infileList:
         templist = temparea.split()
-        if int(templist[2]) == 19:
+        if int(templist[2]) == 16:
             dataList.append(templist[4:])
     #print(dataList)
     return dataList
