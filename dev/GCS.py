@@ -305,11 +305,27 @@ class MainFrame(wx.Frame):
                     pass
         except:
             pass
+
+        # draw current GPS if available
+        try:
+            for dev in range(3):
+                self.dc.SetPen(wx.Pen("BLACK", style = wx.TRANSPARENT))
+                tempGPSs = self.dataExchangeHandle._currentGPS[dev]
+                if len(tempGPSs) > 0:
+                    x, y = self.mapHandle.GPStoImagePos(tempGPSs[0], tempGPSs[1])
+                    self.dc.SetBrush(wx.Brush("YELLOW", wx.SOLID))
+                    self.dc.DrawCircle(x, y, 10)
+                    self.dc.DrawText(str(dev+1), x-2, y-4)
+                else:
+                    pass
+        except:
+            pass
+
         self.dc.SelectObject(wx.NullBitmap)
         self.imageCtrl.SetBitmap(tempImage)
 
     def OnIdle(self,event):
-        self.Refresh(False)
+        self.Refresh()
 
     def OnEnterWindow(self, event):
         #print('Enter Window')

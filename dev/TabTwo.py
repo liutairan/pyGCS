@@ -275,8 +275,8 @@ class TabTwo(wx.Panel):
         self.angy.SetLabel('ANG-Y: '+str(global_obj.msp_attitude['angy']))
 
         # Outer states
-        self.lat.SetLabel('Lat: '+str(global_obj.msp_raw_gps['gps_lat']))
-        self.lon.SetLabel('Lon: '+str(global_obj.msp_raw_gps['gps_lon']))
+        self.lat.SetLabel('Lat: '+str(int(global_obj.msp_raw_gps['gps_lat'])/(10.0**7) ) )
+        self.lon.SetLabel('Lon: '+str(int(global_obj.msp_raw_gps['gps_lon'])/(10.0**7) ) )
         self.alt.SetLabel('Alt: '+str(global_obj.msp_raw_gps['gps_altitude']))
         self.numberSat.SetLabel('No. Sat: '+str(global_obj.msp_raw_gps['gps_numsat']))
         self.fixType.SetLabel('Fix Type: '+str(global_obj.msp_raw_gps['gps_fix']))

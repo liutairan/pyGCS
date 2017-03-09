@@ -141,6 +141,7 @@ class DataExchange(object):
         self._addressList = [[],[],[]]
         self._waypointLists = [[],[],[]]
         self._waypointLists_air = [[],[],[]]
+        self._currentGPS = [[],[],[]]
         self._serialPort = ''
         self._serialOn = False
         self.workerSerial = None

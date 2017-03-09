@@ -186,6 +186,7 @@ class TabOne(wx.Panel):
     def OnUpdate(self, global_states, other_states):
         # use global_states to update this page
         # global_states will always have 3 elements, if any object is not connected, then a None will hold the place
+        # other_states are quad connection information, only used to indicate a quad is connected or not.
         #print('tab one updated')
         #print(global_states)
         #print(other_states)
@@ -250,6 +251,12 @@ class TabOne(wx.Panel):
                     self.voltageLight1.SetBackgroundColour((255,0,0))
                 else:
                     self.voltageLight1.SetBackgroundColour((255,0,0))
+
+                # GPS
+                if global_states[0].msp_raw_gps['gps_fix'] == 2:
+                    self.deh._currentGPS[0] = [int(global_states[0].msp_raw_gps['gps_lat'])/(10.0**7), int(global_states[0].msp_raw_gps['gps_lon'])/(10.0**7)]
+                else:
+                    pass # no valid GPS data received, keep last data
             else:
                 self.connectLight1.SetBackgroundColour((255,0,0))
 
