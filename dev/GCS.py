@@ -214,6 +214,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnAutoZoom, self.autoZoomButton)
         self.retHomeButton = wx.Button(self.pnl, -1, 'Return Home', pos = (143, 642), size = (95,20))
         self.Bind(wx.EVT_BUTTON, self.OnReturnHome, self.retHomeButton)
+        self.zoomlevelLabel = wx.StaticText(self, -1, 'Zoom Level: '+str(self._zoom), pos = (245,647), size = (40,20))
         # Show
         self.Show(True)
 
@@ -248,11 +249,13 @@ class MainFrame(wx.Frame):
 
     def OnIncZoom(self, event):
         self._zoom = self._zoom + 1
+        self.zoomlevelLabel.SetLabel('Zoom Level: '+str(self._zoom))
         self.mapHandle.zoom(1)
         self.Refresh()
 
     def OnDecZoom(self, event):
         self._zoom = self._zoom - 1
+        self.zoomlevelLabel.SetLabel('Zoom Level: '+str(self._zoom))
         self.mapHandle.zoom(-1)
         self.Refresh()
 
@@ -286,6 +289,8 @@ class MainFrame(wx.Frame):
             max_lon = max(lonList)
             min_lon = min(lonList)
             [_center_lat, _center_lon, _zoomlevel] = self.mapHandle._find_zoomlevel(min_lat, max_lat, min_lon, max_lon)
+            self._zoom = _zoomlevel
+            self.zoomlevelLabel.SetLabel('Zoom Level: '+str(self._zoom))
             self.mapHandle._reload(_center_lat, _center_lon, _zoomlevel)
             self.Refresh()
 
