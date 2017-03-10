@@ -412,6 +412,34 @@ class TabOne(wx.Panel):
         elif self.connectButton.GetLabel() == 'Disconnect':
             print('Disconnected')
             self.connectButton.SetLabel('Connect')
+            # Quad 1
+            self.armLight1.SetBackgroundColour((220,220,220))
+            self.levelLight1.SetBackgroundColour((220,220,220))
+            self.altLight1.SetBackgroundColour((220,220,220))
+            self.posLight1.SetBackgroundColour((220,220,220))
+            self.navLight1.SetBackgroundColour((220,220,220))
+            self.gcsLight1.SetBackgroundColour((220,220,220))
+            self.voltageLight1.SetBackgroundColour((220,220,220))
+            self.voltageLight1.SetLabel('0.0 V')
+            # Quad 2
+            self.armLight2.SetBackgroundColour((220,220,220))
+            self.levelLight2.SetBackgroundColour((220,220,220))
+            self.altLight2.SetBackgroundColour((220,220,220))
+            self.posLight2.SetBackgroundColour((220,220,220))
+            self.navLight2.SetBackgroundColour((220,220,220))
+            self.gcsLight2.SetBackgroundColour((220,220,220))
+            self.voltageLight2.SetBackgroundColour((220,220,220))
+            self.voltageLight2.SetLabel('0.0 V')
+            # Quad 3
+            self.armLight3.SetBackgroundColour((220,220,220))
+            self.levelLight3.SetBackgroundColour((220,220,220))
+            self.altLight3.SetBackgroundColour((220,220,220))
+            self.posLight3.SetBackgroundColour((220,220,220))
+            self.navLight3.SetBackgroundColour((220,220,220))
+            self.gcsLight3.SetBackgroundColour((220,220,220))
+            self.voltageLight3.SetBackgroundColour((220,220,220))
+            self.voltageLight3.SetLabel('0.0 V')
+
             self.deh.serialOn = False
         else:
             pass

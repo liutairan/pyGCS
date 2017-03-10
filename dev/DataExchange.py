@@ -87,25 +87,34 @@ class WorkerProcess(multiprocessing.Process):
 
             if next_task[0] == 0:
                 self.modeSelection = 0
-                #print(self.modeSelection)
-                self.sch.RegularLoadInfoLoose()
+                self.sch.RegularLoadOverview()
+                self.sch.RegularLoadAllGPS()
                 self.result_queue.put(self.sch.quadObjs)
                 time.sleep(0.2)
             elif next_task[0] == 1:
                 self.modeSelection = 1
-                self.sch.RegularLoadInfo()
-                self.result_queue.put(self.sch.quadObjs)
-                time.sleep(0.2)
-                #print(self.modeSelection)
-                #self.modeSelection = 0
+                if len(self.addressList[0]) > 0:
+                    self.sch.RegularLoadAllGPS()
+                    self.sch.RegularLoadQuad1()
+                    self.result_queue.put(self.sch.quadObjs)
+                    time.sleep(0.2)
+
             elif next_task[0] == 2:
                 self.modeSelection = 2
-                #print(self.modeSelection)
-                #self.modeSelection = 0
+                if len(self.addressList[1]) > 0:
+                    self.sch.RegularLoadAllGPS()
+                    self.sch.RegularLoadQuad2()
+                    self.result_queue.put(self.sch.quadObjs)
+                    time.sleep(0.2)
+
             elif next_task[0] == 3:
                 self.modeSelection = 3
-                #print(self.modeSelection)
-                #self.modeSelection = 0
+                if len(self.addressList[2]) > 0:
+                    self.sch.RegularLoadAllGPS()
+                    self.sch.RegularLoadQuad3()
+                    self.result_queue.put(self.sch.quadObjs)
+                    time.sleep(0.2)
+
             elif next_task[0] == 11:
                 #print(next_task)
                 tempMissionList = next_task[1]
