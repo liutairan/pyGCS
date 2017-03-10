@@ -139,6 +139,66 @@ class SerialCommunication(object):
             print(Exception)
             print(error)
 
+    def RegularLoadOverview(self):
+        for i in range(len(self.quadObjs)):
+            tempObj = self.quadObjs[i]
+            try:
+                self.board.getDataLoose(0, MultiWii.MSP_STATUS_EX, [], tempObj, self.quadObjs)
+                self.board.getDataLoose(0, MultiWii.ANALOG, [], tempObj, self.quadObjs)
+            except:
+                pass
+
+    def RegularLoadAllGPS(self):
+        for i in range(len(self.quadObjs)):
+            tempObj = self.quadObjs[i]
+            try:
+                self.board.getData(0,MultiWii.RAW_GPS,[],tempObj)
+            except:
+                pass
+
+    def RegularLoadQuad1(self):
+        quadObjId = 0
+        tempObj = self.quadObjs[quadObjId]
+        try:
+            self.board.getData(0,MultiWii.MSP_STATUS_EX,[],tempObj)
+            self.board.parseSensorStatus(tempObj)
+            self.board.parseFlightModeFlags(tempObj)
+            self.board.getData(0,MultiWii.ANALOG,[],tempObj)
+        except:
+            pass
+
+    def RegularLoadQuad2(self):
+        quadObjId = 1
+        for i in range(1):
+            if len(self.addressList[i]) == 0:
+                quadObjId = quadObjId - 1
+            else:
+                pass
+        tempObj = self.quadObjs[quadObjId]
+        try:
+            self.board.getData(0,MultiWii.MSP_STATUS_EX,[],tempObj)
+            self.board.parseSensorStatus(tempObj)
+            self.board.parseFlightModeFlags(tempObj)
+            self.board.getData(0,MultiWii.ANALOG,[],tempObj)
+        except:
+            pass
+
+    def RegularLoadQuad3(self):
+        quadObjId = 2
+        for i in range(1):
+            if len(self.addressList[i]) == 0:
+                quadObjId = quadObjId - 1
+            else:
+                pass
+        tempObj = self.quadObjs[quadObjId]
+        try:
+            self.board.getData(0,MultiWii.MSP_STATUS_EX,[],tempObj)
+            self.board.parseSensorStatus(tempObj)
+            self.board.parseFlightModeFlags(tempObj)
+            self.board.getData(0,MultiWii.ANALOG,[],tempObj)
+        except:
+            pass
+
     def RegularLoadInfoLoose(self):
         for i in range(len(self.quadObjs)):
             tempObj = self.quadObjs[i]
