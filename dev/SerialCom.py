@@ -80,6 +80,25 @@ class SerialCommunication(object):
         self.board = MultiWii(self.serialPort)
         self._rawData = None
         self.quadObjs = []
+
+        path = '/Users/liutairan/Documents/PythonLab/pyGCS_dev/dev9/'
+        logname = path + time.asctime() + '.log'
+        self.logger = logging.getLogger('Serial Data')
+        self.logger.setLevel(logging.DEBUG)
+        # create file handler which logs even debug messages
+        fh = logging.FileHandler(logname)
+        fh.setLevel(logging.DEBUG)
+        # create console handler with a higher log level
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.ERROR)
+        # create formatter and add it to the handlers
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        ch.setFormatter(formatter)
+        fh.setFormatter(formatter)
+        # add the handlers to logger
+        self.logger.addHandler(ch)
+        self.logger.addHandler(fh)
+
         self.CreateObjs()
         self.PreLoadInfo()
 
@@ -109,6 +128,7 @@ class SerialCommunication(object):
     def PreCheck(self, obj):
         try:
             self.board.getData(0,MultiWii.BOXIDS,[],obj)
+            self.logger.info(obj.activeBoxes)
         except Exception, error:
             print('Failed')
             print(Exception)
@@ -153,6 +173,8 @@ class SerialCommunication(object):
             tempObj = self.quadObjs[i]
             try:
                 self.board.getData(0,MultiWii.RAW_GPS,[],tempObj)
+                self.logger.info(tempObj.msp_raw_gps)
+                #self.logger.info('raw gps')
             except:
                 pass
 
