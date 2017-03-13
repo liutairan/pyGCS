@@ -116,7 +116,6 @@ class WorkerProcess(multiprocessing.Process):
                     time.sleep(0.2)
 
             elif next_task[0] == 11:
-                #print(next_task)
                 tempMissionList = next_task[1]
                 self.sch.UploadWPs(next_task)
             elif next_task[0] == 12:
@@ -125,7 +124,13 @@ class WorkerProcess(multiprocessing.Process):
             elif next_task[0] == 13:
                 tempMissionList = next_task[1]
                 self.sch.UploadWPs(next_task)
-                #print(next_task)
+
+            elif next_task[0] == 21:
+                self.sch.downloadMissionList(next_task)
+            elif next_task[0] == 22:
+                self.sch.downloadMissionList(next_task)
+            elif next_task[0] == 23:
+                self.sch.downloadMissionList(next_task)
             else:
                 pass
         print "Exited"
@@ -221,6 +226,12 @@ class DataExchange(object):
                 self.task.put([self._serialMode, self._waypointLists_air[1]])
             elif self._serialMode == 13:
                 self.task.put([self._serialMode, self._waypointLists_air[2]])
+            elif self._serialMode == 21:
+                self.task.put([self._serialMode])
+            elif self._serialMode == 22:
+                self.task.put([self._serialMode])
+            elif self._serialMode == 23:
+                self.task.put([self._serialMode])
             else:
                 self.task.put([self._serialMode])
             #self.workerSerial.mode(self.serialMode)

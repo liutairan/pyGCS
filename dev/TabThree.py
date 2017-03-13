@@ -173,7 +173,7 @@ class TabThree(wx.Panel):
             print('No WP defined.')
 
     def OnClickDownloadWPButton(self, event):
-        pass
+        self.deh.serialMode = 22
 
     def OnUpdate(self, global_obj):
         if global_obj.sensor_flags['acc'] == 1:

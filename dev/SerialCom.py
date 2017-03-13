@@ -243,12 +243,22 @@ class SerialCommunication(object):
             else:
                 pass
         self.quadObjs[quadObjId].missionList = mission
-        print("Start uploaded missions. Quad: " + str(quadId))
+        print("Start upload missions. Quad: " + str(quadId))
         self.board.uploadMissions(self.quadObjs[quadObjId])
         print("All missions uploaded successfully. Quad: " + str(quadId))
 
-    def DownloadWPs(self):
-        pass
+    def DownloadWPs(self, mission_task):
+        quadId = mission_task[0] - 20
+        quadObjId = quadId - 1
+
+        for i in range(quadId):
+            if len(self.addressList[i]) == 0:
+                quadObjId = quadObjId - 1
+            else:
+                pass
+        print("Start download missions. Quad: " + str(quadId))
+        self.board.downloadMissions(self.quadObjs[quadObjId])
+        print("All missions downloaded successfully. Quad: " + str(quadId))
 
 
     def get_rawData(self):
