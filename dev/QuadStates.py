@@ -96,3 +96,4 @@ class QuadStates():
 
         self.missionList = []
         self.tempMission = []
+        self.downloadMissionList = []

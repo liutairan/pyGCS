@@ -182,9 +182,13 @@ class SerialCommunication(object):
         quadObjId = 0
         tempObj = self.quadObjs[quadObjId]
         try:
+            #self.board.arm(tempObj)
             self.board.getData(0,MultiWii.MSP_STATUS_EX,[],tempObj)
             self.board.parseSensorStatus(tempObj)
             self.board.parseFlightModeFlags(tempObj)
+            self.board.parseArmingFlags(tempObj)
+            #print('BLOCK_NAV_SAFETY:')
+            #print(tempObj.armStatus['BLOCK_NAV_SAFETY'])
             self.board.getData(0,MultiWii.ANALOG,[],tempObj)
         except:
             pass
@@ -243,12 +247,74 @@ class SerialCommunication(object):
             else:
                 pass
         self.quadObjs[quadObjId].missionList = mission
-        print("Start uploaded missions. Quad: " + str(quadId))
+        print("Start upload missions. Quad: " + str(quadId))
         self.board.uploadMissions(self.quadObjs[quadObjId])
         print("All missions uploaded successfully. Quad: " + str(quadId))
 
-    def DownloadWPs(self):
-        pass
+    def DownloadWPs(self, mission_task):
+        quadId = mission_task[0] - 20
+        quadObjId = quadId - 1
+
+        for i in range(quadId):
+            if len(self.addressList[i]) == 0:
+                quadObjId = quadObjId - 1
+            else:
+                pass
+        print("Start download missions. Quad: " + str(quadId))
+        self.board.downloadMissions(self.quadObjs[quadObjId])
+        print("All missions downloaded successfully. Quad: " + str(quadId))
+
+    def RegularArmAll(self):
+        for i in range(len(self.quadObjs)):
+            tempObj = self.quadObjs[i]
+            try:
+                self.board.arm(tempObj)
+                #self.logger.info(tempObj.msp_raw_gps)
+                #self.logger.info('raw gps')
+            except:
+                pass
+    def RegularDisarmAll(self):
+        for i in range(len(self.quadObjs)):
+            tempObj = self.quadObjs[i]
+            try:
+                self.board.disarm(tempObj)
+            except:
+                pass
+
+    def StartMission(self, mission_task):
+        quadId = mission_task[0] - 30
+        quadObjId = quadId - 1
+
+        for i in range(quadId):
+            if len(self.addressList[i]) == 0:
+                quadObjId = quadObjId - 1
+            else:
+                pass
+        tempObj = self.quadObjs[quadObjId]
+        #print("Start arm. Quad: " + str(quadId))
+        self.board.arm(tempObj)
+        #self.board.getData(0,MultiWii.MSP_STATUS_EX,[],tempObj)
+        #self.board.parseSensorStatus(tempObj)
+        #self.board.parseFlightModeFlags(tempObj)
+        #self.board.parseArmingFlags(tempObj)
+        #print('BLOCK_NAV_SAFETY:')
+        #print(tempObj.armStatus['BLOCK_NAV_SAFETY'])
+        #print('ARM:')
+        #print(tempObj.flightModes['ARM'])
+        #print("Armed successfully. Quad: " + str(quadId))
+
+    def AbortMission(self, mission_task):
+        quadId = mission_task[0] - 35
+        quadObjId = quadId - 1
+
+        for i in range(quadId):
+            if len(self.addressList[i]) == 0:
+                quadObjId = quadObjId - 1
+            else:
+                pass
+        print("Start disarm. Quad: " + str(quadId))
+        self.board.disarm(self.quadObjs[quadObjId])
+        print("Disarmed successfully. Quad: " + str(quadId))
 
 
     def get_rawData(self):

@@ -76,6 +76,7 @@ class WorkerProcess(multiprocessing.Process):
         self.task_queue = task_queue
         self.result_queue = result_queue
         self.modeSelection = 0
+        self.radioStatus = 0
 
     def run(self):
         while not self.exit.is_set():
@@ -89,12 +90,20 @@ class WorkerProcess(multiprocessing.Process):
                 self.modeSelection = 0
                 self.sch.RegularLoadOverview()
                 self.sch.RegularLoadAllGPS()
+                if self.radioStatus == 0:
+                    pass
+                elif self.radioStatus == 1:
+                    self.sch.RegularDisarmAll()
+                elif self.radioStatus == 3:
+                    self.sch.RegularArmAll()
+                #self.sch.RegularDisarmAll()
                 self.result_queue.put(self.sch.quadObjs)
                 time.sleep(0.2)
             elif next_task[0] == 1:
                 self.modeSelection = 1
                 if len(self.addressList[0]) > 0:
                     self.sch.RegularLoadAllGPS()
+                    self.sch.RegularDisarmAll()
                     self.sch.RegularLoadQuad1()
                     self.result_queue.put(self.sch.quadObjs)
                     time.sleep(0.2)
@@ -103,6 +112,7 @@ class WorkerProcess(multiprocessing.Process):
                 self.modeSelection = 2
                 if len(self.addressList[1]) > 0:
                     self.sch.RegularLoadAllGPS()
+                    self.sch.RegularDisarmAll()
                     self.sch.RegularLoadQuad2()
                     self.result_queue.put(self.sch.quadObjs)
                     time.sleep(0.2)
@@ -111,12 +121,12 @@ class WorkerProcess(multiprocessing.Process):
                 self.modeSelection = 3
                 if len(self.addressList[2]) > 0:
                     self.sch.RegularLoadAllGPS()
+                    self.sch.RegularDisarmAll()
                     self.sch.RegularLoadQuad3()
                     self.result_queue.put(self.sch.quadObjs)
                     time.sleep(0.2)
 
             elif next_task[0] == 11:
-                #print(next_task)
                 tempMissionList = next_task[1]
                 self.sch.UploadWPs(next_task)
             elif next_task[0] == 12:
@@ -125,14 +135,24 @@ class WorkerProcess(multiprocessing.Process):
             elif next_task[0] == 13:
                 tempMissionList = next_task[1]
                 self.sch.UploadWPs(next_task)
-                #print(next_task)
+
+            elif next_task[0] == 21:
+                self.sch.DownloadWPs(next_task)
+            elif next_task[0] == 22:
+                self.sch.DownloadWPs(next_task)
+            elif next_task[0] == 23:
+                self.sch.DownloadWPs(next_task)
+
+            elif next_task[0] == 30:
+                self.radioStatus = 0
+            elif next_task[0] == 31:
+                self.radioStatus = 1
+            elif next_task[0] == 33:
+                self.radioStatus = 3
+
             else:
                 pass
         print "Exited"
-
-    def mode(self, value):
-        self.modeSelection = value
-        #print(self.modeSelection)
 
     def shutdown(self):
         print("Shutdown initiated")
@@ -153,6 +173,7 @@ class DataExchange(object):
         self._currentGPS = [[],[],[]]
         self._serialPort = ''
         self._serialOn = False
+        self._radioOn = 0
         self.workerSerial = None
         self._rawData = None
         self.task = multiprocessing.Queue()
@@ -221,11 +242,38 @@ class DataExchange(object):
                 self.task.put([self._serialMode, self._waypointLists_air[1]])
             elif self._serialMode == 13:
                 self.task.put([self._serialMode, self._waypointLists_air[2]])
+            elif self._serialMode == 21:
+                self.task.put([self._serialMode])
+            elif self._serialMode == 22:
+                self.task.put([self._serialMode])
+            elif self._serialMode == 23:
+                self.task.put([self._serialMode])
             else:
                 self.task.put([self._serialMode])
             #self.workerSerial.mode(self.serialMode)
 
     serialMode = property(get_serialMode, set_serialMode)
+
+    def get_radioOn(self):
+        return self._radioOn
+
+    def set_radioOn(self, value):
+        self._radioOn = value
+        if self.serialOn == True:
+            if self._radioOn == 1:
+                self.task.put([31])
+            elif self._radioOn == 3:
+                self.task.put([33])
+            elif self._radioOn == 0:
+                self.task.put([30])
+            else:
+                pass
+        else:
+            # serial port not opened
+            pass
+
+
+    radioOn = property(get_radioOn, set_radioOn)
 
     def get_rawData(self):
         return self._rawData

@@ -173,7 +173,7 @@ class TabFour(wx.Panel):
             print('No WP defined.')
 
     def OnClickDownloadWPButton(self, event):
-        pass
+        self.deh.serialMode = 23
 
     def OnUpdate(self, global_obj):
         #print('tab two updated')

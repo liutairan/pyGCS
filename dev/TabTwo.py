@@ -49,6 +49,7 @@ class TabTwo(wx.Panel):
         self.deh = DEH
         self.deh.bind_to(self.OnUpdate)
         self.addr_long = '\x00\x13\xA2\x00\x40\xC1\x43\x06'
+        #self.addr_long = '\x00\x13\xA2\x00\x41\x63\xDA\x95'
         self.addr = '\xFF\xFE'
         self._waypointList = []
         self.InitUI()
@@ -121,7 +122,9 @@ class TabTwo(wx.Panel):
         self.downloadWPButton1 = wx.Button(self, -1, 'Download', pos = (125,280), size = (75,20))
         self.Bind(wx.EVT_BUTTON, self.OnClickDownloadWPButton, self.downloadWPButton1)
         self.startMissionButton1 = wx.Button(self, -1, 'Start', pos = (205,280), size = (60,20))
+        self.Bind(wx.EVT_BUTTON, self.OnClickStartButton, self.startMissionButton1)
         self.abortMissionButton1 = wx.Button(self, -1, 'Abort', pos = (270,280), size = (60,20))
+        self.Bind(wx.EVT_BUTTON, self.OnClickAbortButton, self.abortMissionButton1)
 
 
         # List
@@ -178,7 +181,13 @@ class TabTwo(wx.Panel):
             print('No WP defined.')
 
     def OnClickDownloadWPButton(self, event):
-        pass
+        self.deh.serialMode = 21
+
+    def OnClickStartButton(self, event):
+        self.deh.serialMode = 31
+
+    def OnClickAbortButton(self, event):
+        self.deh.serialMode = 36
 
     def OnUpdate(self, global_obj):
         if global_obj.sensor_flags['acc'] == 1:
@@ -224,7 +233,8 @@ class TabTwo(wx.Panel):
         pass
 
         # flight modes
-        #print(global_obj.flightModes)
+        #print('ARM:')
+        #print(global_obj.flightModes['ARM'])
         if global_obj.flightModes['ARM'] == 1:
             self.armLight1.SetLabel('ARMED')
             self.armLight1.SetBackgroundColour((255,0,0))

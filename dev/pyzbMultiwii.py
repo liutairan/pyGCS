@@ -576,6 +576,7 @@ class MultiWii:
         obj.armStatus['BLOCK_ACC_NOT_CALIB'] = temp[2]
         obj.armStatus['UNUSED'] = temp[1]
         obj.armStatus['BLOCK_HARDWARE_FAILURE'] = temp[0]
+        #print(obj.armStatus)
 
     def parseFlightModeFlags(self, obj):
         activeboxes = obj.activeBoxes
@@ -689,7 +690,7 @@ class MultiWii:
             if flag == 165:
                 break
             else:
-                i = i +1
+                i = i + 1
 
         return missionList
 
@@ -706,6 +707,13 @@ class MultiWii:
             self.downloadMissions(temp_frameid, temp_d_addr_long,temp_d_addr)    # not right here
     '''
 
+    def arm(self, obj):
+        self.sendCMDNew(16, MultiWii.SET_RAW_RC, [1500, 1500, 1000, 1500, 1350, 1000, 1000, 1000], obj)
+        #self.getData(0,MultiWii.RC, [], obj)
+        #print(obj.rcChannels['aux1'])
+
+    def disarm(self, obj):
+        self.sendCMDNew(16, MultiWii.SET_RAW_RC, [1500, 1500, 1000, 1500, 1000, 1000, 1000, 1000], obj)
 
     def getDataLoose(self, data_length, send_code, send_data, send_obj, allobjs): #
         frameid = send_obj.frame_id
