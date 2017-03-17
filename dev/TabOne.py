@@ -122,6 +122,15 @@ class TabOne(wx.Panel):
         self.voiceSwitch = wx.Button(self, -1, 'OFF', pos = (140,35), size = (60,20))
         self.Bind(wx.EVT_BUTTON,self.OnClickVoiceSwitch, self.voiceSwitch)
 
+        # Radio
+        radioService = wx.StaticText(self, -1, 'Radio Service', pos = (10,70), size = (120,20))
+        self.radioSwitch = wx.Button(self, -1, 'OFF', pos = (140,65), size = (60,20))
+        self.Bind(wx.EVT_BUTTON,self.OnClickRadioSwitch, self.radioSwitch)
+
+        armService = wx.StaticText(self, -1, 'ARM Service', pos = (10,100), size = (120,20))
+        self.armButton1 = wx.Button(self, -1, 'ARM', pos = (140,100), size = (80,20))
+        self.Bind(wx.EVT_BUTTON,self.OnClickArmSwitch, self.armButton1)
+
         # Status
         self.quadLabel1 = wx.StaticText(self, -1, 'QUAD 1', pos = (5,410), size = (60,20),style=wx.ALIGN_CENTER|wx.ST_NO_AUTORESIZE)
         self.quadLabel1.SetBackgroundColour((220,220,220))
@@ -401,6 +410,30 @@ class TabOne(wx.Panel):
                 self.workerVoice.stop()
                 del(self.workerVoice)
                 self.workerVoice = None
+        else:
+            pass
+
+    def OnClickRadioSwitch(self, event):
+        if self.radioSwitch.GetLabel() == 'OFF':
+            print('Radio ON')
+            self.deh.radioOn = 1
+            self.radioSwitch.SetLabel('ON')
+        elif self.radioSwitch.GetLabel() == 'ON':
+            print('Radio OFF')
+            self.deh.radioOn = 0
+            self.radioSwitch.SetLabel('OFF')
+        else:
+            pass
+
+    def OnClickArmSwitch(self, event):
+        if self.armButton1.GetLabel() == 'ARM':
+            print('ARM')
+            self.deh.radioOn = 3
+            self.armButton1.SetLabel('DISARM')
+        elif self.armButton1.GetLabel() == 'DISARM':
+            print('DISARM')
+            self.deh.radioOn = 1
+            self.armButton1.SetLabel('ARM')
         else:
             pass
 
